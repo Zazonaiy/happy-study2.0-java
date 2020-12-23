@@ -1,0 +1,19 @@
+server:
+  port: 33268
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://jdbc-learning/happy_study2.0?useSSL=false&serverTimezoneCST
+    username: root
+    password: aiywh3
+    filters: stat
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-aliases-package: com.happystudy2.happystudy2management.domain/*
+  mapper-locations: classpath:mapper/*.xml
+log4j:
+  rootLogger: INFO, stdout
+  logger: com.happystudy2.happystudy2management.dao
