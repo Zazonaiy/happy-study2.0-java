@@ -10,12 +10,12 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.MappedSuperclass;
 
 @Data
-@MappedSuperclass
+//@MappedSuperclass
 @ApiModel("DTO超类")
-@SuperBuilder
-@AllArgsConstructor
-@EqualsAndHashCode
-public class BaseDTO {
+//@SuperBuilder
+//@AllArgsConstructor
+//@NoArgsConstructor
+public abstract class BaseDTO {
     private Integer id;
     private String createUser;
     private String createTime;

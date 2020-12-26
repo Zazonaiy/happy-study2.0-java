@@ -16,11 +16,11 @@ import java.util.List;
 
 public class XmlReader {
     public static void initMenuXml(){
-        if (MenuContainer.MENU_LIST.isEmpty()){
+        if (!MenuContainer.MENU_LIST.isEmpty()){
             return ;
         }
         try{
-            ClassPathResource classPathResource = new ClassPathResource("dataxml/font/menu.xml");
+            ClassPathResource classPathResource = new ClassPathResource("dataxml/front/menu.xml");
             InputStream is = classPathResource.getInputStream();
             SAXReader reader = new SAXReader();
             Document document = reader.read(is);
@@ -33,6 +33,7 @@ public class XmlReader {
                 menuModel.setId(menuElem.attributeValue("id"));
                 menuModel.setName(menuElem.attributeValue("name"));
                 menuModel.setIcon(menuElem.attributeValue("icon"));
+                menuModel.setUrl(menuElem.attributeValue("url"));
 
                 //二级菜单
                 List<Element> subMenuList = menuElem.elements();
@@ -42,6 +43,7 @@ public class XmlReader {
                         subMenuModel.setId(subMenuElem.attributeValue("id"));
                         subMenuModel.setName(subMenuElem.attributeValue("name"));
                         subMenuModel.setIcon(subMenuElem.attributeValue("icon"));
+                        subMenuModel.setUrl(menuModel.getUrl()+subMenuElem.attributeValue("url"));
 
                         //三级菜单
                         List<Element> subSubMenuList = subMenuElem.elements();
@@ -51,6 +53,7 @@ public class XmlReader {
                                 subSubMenuModel.setId(subSubMenuElem.attributeValue("id"));
                                 subSubMenuModel.setName(subSubMenuElem.attributeValue("name"));
                                 subSubMenuModel.setIcon(subSubMenuElem.attributeValue("icon"));
+                                subSubMenuModel.setUrl(subMenuModel.getUrl()+subSubMenuElem.attributeValue("url"));
                                 subMenuModel.getSubMenuList().add(subSubMenuModel);
                             }
                         }

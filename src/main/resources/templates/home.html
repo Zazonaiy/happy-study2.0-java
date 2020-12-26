@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>${sysTitle}</title>
+    <link rel="stylesheet" href="${ctxPath}/frame/adminlte/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="${ctxPath}/frame/adminlte/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="${ctxPath}/frame/adminlte/Ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="${ctxPath}/frame/adminlte/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="${ctxPath}/frame/adminlte/css/skins/skin-blue.css">
+    <link rel="stylesheet" href="${ctxPath}/font/welcome_font/iconfont.css">
+    <!-- welcome.css -->
+    <link rel="stylesheet" href="${ctxPath}/css/home/home.css">
+    <!-- jQuery 3 -->
+    <script type="text/javascript" src="${ctxPath}/frame/jquery/jquery-3.4.1.js"></script>
+    <!-- vue -->
+    <script type="text/javascript" src="${ctxPath}/frame/vue/vue.min.js"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="${ctxPath}/frame/adminlte/bootstrap/js/bootstrap.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="${ctxPath}/frame/adminlte/js/adminlte.min.js"></script>
+    <script src="${ctxPath}/frame/adminlte/js/fastclick.js"></script>
+    <script src="${ctxPath}/frame/adminlte/js/app.min.js"></script>
+    <!-- anime -->
+    <script type="text/javascript" src="${ctxPath}/frame/anime/anime.min.js"></script>
+    <!--layui-->
+    <script src="${ctxPath}/frame/layui-v2.5.7/layui/layui.js"></script>
+    <link rel="stylesheet" href="${ctxPath}/frame/layui-v2.5.7/layui/css/layui.css">
+    
+    <style type="text/css">
+    body #test{
+		background: white;
+		background-size: cover;
+		
+		padding:0;
+	}
+	body .content-wrapper{
+		background: snow;
+		background-size: cover;
+		
+		padding:0;
+	}
+	body #maindiv{
+		
+	}
+	.opacity(@opacity) {
+  		opacity: @opacity;
+  		// IE8 filter
+  		@opacity-ie: (@opacity * 100);
+  		filter: ~"alpha(opacity=@{opacity-ie})";
+	}
+	.list-unstyled li a{
+        font-family: "copperplate gothic light";
+        font-size: 18px;
+        color: rgba(192,14,235,0.6);
+
+    }
+    .list-unstyled li{
+        margin-top: 8px;
+        margin-left: 5px;
+    }
+    .noticePane {
+    	padding-top: 1%;
+    	padding-left: 1%;
+    }
+    .noticePane ul li a{
+    	color: black;
+    	
+    }
+    .noticePane ul li a:hover{
+    	color: red;
+    }
+    .teamMemberItem h3{
+    	font-size: 43px;
+    }
+    .teamMemberItem h4{
+    	font-size: 32px; 
+    	margin-top: 20px;
+    }
+    .teamMemberItem h5{
+    	font-size: 28px;
+    	margin-top: 15px;
+    }
+    .teamMemberItem p{
+    	font-size: 16px;
+    }
+    .rollImg:hover{
+    	cursor: pointer;
+    }
+    </style>
+</head>
+
+<body class="skin-blue sidebar-mini" >
+<input hidden="hidden" id="username" value="">
+<input hidden="hidden" id="property" value="">
+<input hidden="hidden" id="position" value="">
+<input hidden="hidden" id="userphone" value="">
+
+<!-- 功能隐藏框 -->
+<input hidden="hidden" id='registNo' value="">
+<div id="test">
+    <div class="wrapper" id="bodydiv">
+        <header class="main-header">
+            <!-- Logo -->
+            <a  href="javacript://" class="logo">
+                <span class="logo-mini">
+                </span>
+                <span class="logo-lg">${sysTitle}</span>
+            </a>
+            <!-- Header Navbar: style can be found in header.less -->
+            <nav class="navbar navbar-static-top"  style="display: flex; align-items: center;">
+            	
+            	<div style="display: flex; flex-direction: row; align-items: center; width: 20%; margin-right: 68%">
+                <!-- Sidebar toggle button-->
+                <a href="javascript://" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">切换导航</span>
+                </a>
+                <p id="timetable" style="margin-bottom: 0px; color: #fff;"></p>
+                </div>
+                <!-- Navbar Right Menu -->
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <!-- Messages: style can be found in dropdown.less-->
+                        <!-- Notifications: style can be found in dropdown.less -->
+                        <!-- User Account: style can be found in dropdown.less -->
+                        <li class="dropdown user user-menu">
+                            <a href="javascript://" class="dropdown-toggle" data-toggle="dropdown" />
+                                <img src="${ctxPath}/img/test.jpg" onerror="this.src='${ctxPath}/img/test.jpg'"  class="user-image user-head-img" alt="User Image">
+                                <span class="hidden-xs">aaa</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                                <li class="user-header">
+                                    <img src="${ctxPath}/img/test.jpg" onerror="this.src='${ctxPath}/img/test.jpg'" class="img-circle user-head-img" >
+                                    <p>
+                                        aaa
+                                        <small>5111xxxxxxxxxx2013</small>
+                                    </p>
+                                </li>
+                                <!-- Menu Body -->
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="javascript://" class="btn btn-default btn-flat">个人档案</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="${ctxPath}/happy-study/loginOut" class="btn btn-default btn-flat">退出</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Control Sidebar Toggle Button -->
+                    </ul>
+                </div>
+
+            </nav>
+        </header>
+        <!-- Left side column. contains the logo and sidebar -->
+        <aside class="main-sidebar">
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar" style="height: auto;">
+                <!-- Sidebar user panel -->
+                <div class="user-panel">
+                    <div class="pull-left image">
+                        <img src="${ctxPath}/img/test.jpg" onerror="this.src='${ctxPath}/img/test.jpg'" class="img-circle" />
+                    </div>
+                    <div class="pull-left info">
+                        <p>aaa</p>
+                        <a href="javascript://">
+                            <i class="fa fa-circle text-success"></i> 四川乐山
+                        </a>
+                    </div>
+                </div>
+
+                <!-- sidebar menu: : style can be found in sidebar.less -->
+                <ul class="sidebar-menu" v-for="menu in menus">
+                  <!--  <li class="header">主导航</li> --> 
+                    
+                    <li class="treeview" >
+                 		<a href="javascript://" @click="navigateTo(menu.url)" >
+                        	<!-- <i class="menu.icon"></i> -->
+                        	<span :class="menu.icon" style="margin-left: 10px;margin-right: 5px;"></span>
+                        	<span>{{menu.name}}</span>
+                        	<span class="pull-right-container">
+                        		<i class="fa fa-angle-left pull-right" v-if="menu.subMenus.length>0"></i>
+                        		
+                        	</span>
+                        </a>
+                        <ul class="treeview-menu" v-if="menu.subMenus.length>0" v-for="subMenu in menu.subMenus">
+                        	<li><a style="padding-left: 50px;" @click="navigateTo(subMenu.id)" href="javascript://"><span :class="subMenu.icon" style="margin-right: 10px;"></span>{{subMenu.name}}</a></li>
+                        </ul>
+                 	</li>
+                </ul>
+            </section>
+            <!-- /.sidebar -->
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper" style="min-height: 916px; height: 830px;">
+            <!-- Content Header (Page header) -->
+            <section class="content-header" style="height: 50px;
+             background: rgba(0, 0, 0, 0.3); box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.4);
+             box-sizing: border-box; border-bottom: 1px solid" id="head-pane">
+                
+                <marquee loop="2" style="font-size: 20px; color: white; font-weight: bolder;"
+                	behavior="scroll" direction="left" id="DynamicMarquee">Welcome to Happy-Study2.0!</marquee>
+            </section>
+            <!-- Main content -->
+            <div id="maindiv" align="center" style="height: 100%">
+
+            </div>
+            <!-- /.content -->
+        </div>
+        
+    </div>
+	<div style="background: rgba(0, 0, 0, 0.3);">
+		<!-- /.content-wrapper -->
+        <footer class="main-footer" style="background: rgba(0, 0, 0, 0.3); 
+        box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.4); margin: 0 0 0 0; border: 2px solid rgba(0, 0, 0, 0.3);">
+            <div class="pull-right hidden-xs">
+                <b>Version</b> 1.0
+            </div>
+            <strong>Copyright © 2020 SCUJCC.</strong> All rights reserved.四川大学锦城学院版权所有
+        </footer>
+        <div class="control-sidebar-bg" style="position: fixed; height: auto;"></div>
+	</div>
+</div>
+</body>
+</html>
+
+<script>
+	var menusArray = null;
+	var vue = new Vue({
+		el : "#bodydiv",
+		data : {
+			menus : null,
+			icon : "iconfont icon-daohangshouye",
+			currentUser : {
+				property : "",
+			}
+		},
+		methods : {
+			toJinCheng : function(){
+				//$("#jincheng-page").trigger("click");
+				window.open("http://www.scujcc.edu.cn/")
+			},
+			navigateTo : function(menuUrl){
+				console.log(menuUrl);
+				if (menuId=="/happy-study/welcome"){
+					$(location).attr("href", "${ctxPath}/happy-study/welcome");
+				}
+				var url = "${ctxPath}/"+menuUrl;
+				console.log(url);
+				$("#maindiv").empty();
+				$("#maindiv").html("Loading...");
+				$("#maindiv").load(url);
+			},
+			getMenu : function(){
+				$.get("${ctxPath}/happy-study/getMenu", {}, response=>{
+					console.log(response);
+					this.menus = response.menu
+					console.log(this.menus);
+					console.log(this.menus[0].id);
+					console.log(this.menus[1].subMenus[0]);
+					
+				});
+				
+				
+			},
+		},
+		mounted : function(){
+			this.getMenu();
+			this.currentUser.property=$("#property").val();
+		}
+	})
+	
+	function show(){
+		var d = new Date();
+		var year = d.getFullYear();
+		var month = d.getMonth() + 1
+		var week=d.getDay();
+		var dayNum = d.getDate();
+		var h = d.getHours();
+		var m = d.getMinutes();
+		var s=d.getSeconds();
+		var chineseWeek = ['天','一','二','三','四','五','六'];
+		$("#timetable").text(year+"年"+month+"月"+dayNum+"日" + ": 星期" +chineseWeek[week]+" "+h+":"+m+":"+s);
+	}
+	$(function(){
+		setInterval(()=>{show()}, 1000);
+	})
+	
+	//轮播图
+	layui.use('carousel', function(){
+        var carousel = layui.carousel;
+        //建造实例
+        carousel.render({
+            elem: '#rotation'
+            ,width: '830px' //设置容器宽度
+            ,height:'100%'
+            ,arrow: 'always' //始终显示箭头
+            //,anim: 'updown' //切换动画方式
+        });
+
+        var carousel = layui.carousel;
+        
+    });
+</script>

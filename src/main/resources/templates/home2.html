@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>${sysTitle}</title>
+    <!-- jQuery 3 -->
+    <script type="text/javascript" src="${ctxPath}/frame/jquery/jquery-3.4.1.js"></script>
+    <!-- vue -->
+    <script type="text/javascript" src="${ctxPath}/frame/vue/vue.min.js"></script>
+    <!-- layui -->
+    <script src="${ctxPath}/frame/layui-v2.5.7/layui/layui.js"></script>
+    <link rel="stylesheet" href="${ctxPath}/frame/layui-v2.5.7/layui/css/layui.css">
+    <!-- bootstrap4 -->
+    <!--
+    <script src="${ctxPath}/frame/bootstrap-4.5.0-dist/js/bootstrap.bundle.js" ></script>
+    <link rel="stylesheet" href="${ctxPath}/frame/bootstrap-4.5.0-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="${ctxPath}/frame/bootstrap-4.5.0-dist/css/bootstrap-grid.css">
+    <link rel="stylesheet" href="${ctxPath}/frame/bootstrap-4.5.0-dist/css/bootstrap-reboot.css">
+    -->
+    <!-- anime -->
+    <script type="text/javascript" src="${ctxPath}/frame/anime/anime.min.js"></script>
+
+</head>
+<style>
+    #outter .nonUnderline{
+        text-decoration : none;
+    }
+</style>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin" id="outter">
+    <div class="layui-header">
+        <div class="layui-logo">${sysTitle}</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="">控制台</a></li>
+            <li class="layui-nav-item"><a href="">商品管理</a></li>
+            <li class="layui-nav-item"><a href="">用户</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;" class="nonUnderline">其它系统</a>
+                <dl class="layui-nav-child">
+                    <dd><a href="" class="nonUnderline">邮件管理</a></dd>
+                    <dd><a href="" class="nonUnderline">消息管理</a></dd>
+                    <dd><a href="" class="nonUnderline">授权管理</a></dd>
+                </dl>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;" class="nonUnderline">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    贤心
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="" class="nonUnderline">基本资料</a></dd>
+                    <dd><a href="" class="nonUnderline">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item nonUnderline"><a href="">退了</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test" v-for="menu in menus" style="margin-bottom: 0;">
+                <li class="layui-nav-item">
+                    <a class="nonUnderline" href="javascript:;" @click="navigateTo(menu)">{{menu.name}}</a>
+                    <dl class="layui-nav-child" v-for="subMenu in menu.subMenuList" style="margin-bottom: 0;">
+                        <dd style="margin-bottom: 0;"><a href="javascript:;" class="nonUnderline"
+                                                         @click="navigateTo(subMenu)">· {{subMenu.name}}</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <!-- 导航记录栏 -->
+            <div style="padding-bottom: 15px">
+                <span class="layui-breadcrumb">
+                <a href="/">首页</a>
+                <a href="/demo/">演示</a>
+                <a><cite>导航元素</cite></a>
+                </span>
+            </div>
+
+            <div id ="maindiv">
+                主题区域
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © author - 杨伟豪 所有权归杨伟豪所有
+    </div>
+</div>
+
+
+<script>
+    var menusArray = null;
+    var vue = new Vue({
+        el : "#outter",
+        data : {
+            menus : null,
+            icon : "iconfont icon-daohangshouye",
+            currentUser : null,
+            loadingFont : "<i class='layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop' " +
+                "style='font-size: 30px'></i> loading"
+        },
+        methods : {
+            navigateTo : function(menu){
+                //console.log(menu);
+                if (menu.subMenuList.length!=0){
+                    return;
+                }
+                var menuUrl = menu.url;
+                var url = "${ctxPath}"+menuUrl;
+
+                if (menu.id == "home"){
+                    $(location).attr("href", url);
+                    return;
+                }
+                var loading = vue.loadingFont;
+                console.log(loading);
+                console.log(url);
+                $("#maindiv").empty();
+                $("#maindiv").html(loading);
+                $("#maindiv").load(url);
+            },
+            getMenu : function(){
+                $.get("${ctxPath}/happy-study/getMenu", {}, response=>{
+                    //console.log(response);
+                    this.menus = response.menu;
+
+                });
+
+
+            },
+        },
+        mounted : function(){
+            layui.use('element', function(){
+                var element = layui.element;
+
+            });
+            this.getMenu();
+
+            setInterval(()=>{show()}, 1000);
+        }
+    })
+
+    function show(){
+        var d = new Date();
+        var year = d.getFullYear();
+        var month = d.getMonth() + 1
+        var week=d.getDay();
+        var dayNum = d.getDate();
+        var h = d.getHours();
+        var m = d.getMinutes();
+        var s=d.getSeconds();
+        var chineseWeek = ['天','一','二','三','四','五','六'];
+        $("#timetable").text(year+"年"+month+"月"+dayNum+"日" + ": 星期" +chineseWeek[week]+" "+h+":"+m+":"+s);
+    }
+    $(function(){
+
+    })
+
+
+</script>
+</body>
+</html>

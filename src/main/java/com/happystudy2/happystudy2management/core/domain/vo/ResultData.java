@@ -13,10 +13,10 @@ import java.util.List;
 @ApiModel("返回前端的数据")
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResultData {
-    private List<Object> resData;
+public class ResultData <T extends BaseVO> {
+    private List<T> resData;
 
-    private String state;
+    private Integer state;
 
     private String description;
 }

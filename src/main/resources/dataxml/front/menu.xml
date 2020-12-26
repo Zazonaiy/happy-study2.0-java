@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menus>
+    <menu id="home" name="系统首页" url="/happy-study/home" icon=""></menu>
+    <menu id="studentMan" name="学生管理" url="/happy-study/studentMan" icon="">
+        <menu id="sm1" name="学生基本信息" url="" icon=""/>
+        <menu id="sm2" name="学生成绩" url="/score" icon=""/>
+        <menu id="sm3" name="学生记过" url="/pu" icon=""/>
+        <menu id="sm4" name="学生表彰" url="/re" icon="/"/>
+        <menu id="sm5" name="学生综合评定" url="/comp" icon=""/>
+    </menu>
+    <menu id="teacherMan" name="教师管理" url="/happy-study/teacherMan" icon="">
+        <menu id="tm1" name="教师基本信息" url="" icon=""/>
+        <menu id="tm2" name="授课情况" url="/course" icon=""/>
+        <menu id="tm3" name="教师带班" url="/clazz" icon="" />
+        <menu id="tm4" name="教师记过" url="/pu" icon="" />
+        <menu id="tm5" name="教师表彰" url="/re" icon="" />
+        <menu id="tm6" name="教师综合评定" url="/comp" icon="" />
+    </menu>
+    <menu id="clazzMan" name="班级管理" url="/happy-study/clazzMan" icon="">
+        <menu id="clm1" name="班级基本信息" url="" icon="" />
+        <menu id="clm2" name="班级记过" url="/pu" icon="" />
+        <menu id="clm3" name="班级表彰" url="/re" icon="" />
+        <menu id="clm4" name="班级成绩情况" url="/score" icon="" />
+    </menu>
+    <menu id="gradeMan" name="年级管理" url="/happy-study/gradeMan" icon="">
+        <menu id="gm1" name="年级团队列表" url="" icon="" />
+        <menu id="gm2" name="年级主任信息" url="/master" icon="" />
+        <menu id="gm3" name="年级教师队伍" url="/teacher" icon="" />
+        <menu id="gm4" name="年级成绩情况" url="/score" icon="" />
+        <menu id="gm5" name="年级综合评定" url="/comp" icon="" />
+    </menu>
+    <menu id="courseMan" name="课程管理" url="/happy-study/courseMan" icon="">
+        <menu id="com1" name="课程基本信息" url="" icon="" />
+        <menu id="com2" name="授课教师信息" url="/teacher" icon="" />
+        <menu id="com3" name="课程分数情况" url="/score" icon="" />
+        <menu id="com4" name="课程作业" url="" icon="/homework" />
+    </menu>
+    <menu id="scoreMan" name="成绩管理" url="/happy-study/scoreMan" icon="">
+        <menu id="scm1" name="成绩查询" url="" icon="" />
+        <menu id="scm2" name="成绩录入" url="/import" icon="" />
+        <menu id="scm3" name="申请修改成绩" url="/update" icon="" />
+    </menu>
+    <menu id="subjectMan" name="学科管理" url="/happy-study/subjectMan" icon="">
+        <menu id="sbm1" name="学科列表" url="" icon="" />
+        <menu id="sbm2" name="学课成绩统计" url="/score" icon="" />
+    </menu>
+    <menu id="userMan" name="用户管理" url="/happy-study/userMan" icon="">
+        <menu id="um1" name="用户列表" url="" icon="" />
+        <menu id="um2" name="用户账号注册" url="/regist" icon="" />
+        <menu id="um3" name="用户密码修改" url="/update" icon="" />
+        <menu id="um4" name="我的信息" url="/my" icon="" />
+        <menu id="um5" name="我的课程表" url="/courseTable" icon="" />
+    </menu>
+    <menu id="examMan" name="考试管理" url="/happy-study/exam" icon="">
+        <menu id="exm1" name="考试基本信息" url="" icon="" />
+        <menu id="exm2" name="开设考试" url="/regist" icon="" />
+        <menu id="exm3" name="正在进行的考试" url="/ongoing" icon="" />
+    </menu>
+    <menu id="repuMan" name="记过表彰" url="/happy-study/repu" icon="">
+        <menu id="rpm1" name="记过申请" url="/puApply" icon="" />
+        <menu id="rpm2" name="记过审批" url="/puApproval" icon="" />
+        <menu id="rpm3" name="表彰申请" url="/reApply" icon="" />
+        <menu id="rpm4" name="表彰审批" url="/reApproval" icon="" />
+    </menu>
+    <menu id="assessMan" name="考核评定" url="/happy-study/assess" icon="">
+        <menu id="asm1" name="考核查询" url="" icon="" />
+        <menu id="asm2" name="学生评分" url="/student" icon="" />
+        <menu id="asm3" name="教师评分" url="/teacher" icon="" />
+        <menu id="asm4" name="班级评分" url="/clazz" icon="" />
+        <menu id="asm5" name="年级评分" url="/grade" icon="" />
+        <menu id="asm6" name="课程评分" url="/course" icon="" />
+    </menu>
+    <menu id="leave" name="我要请假" url="/happy-study/leave" icon="" />
+    <menu id="healthMan" name="疫情管控" url="/happy-study/health" icon="">
+        <menu id="hlm1" name="健康日报" url="/daily" icon="" />
+        <menu id="hlm2" name="风险查询" url="" icon="" />
+        <menu id="hlm3" name="风险处理" url="/solved" icon="" />
+        <menu id="hlm4" name="申报风险" url="/apply" icon="" />
+        <menu id="hlm5" name="风险审批" url="/approval" icon="" />
+    </menu>
+    <menu id="smallFunc" name="小功能" url="/happy-study/smallFunc" icon="">
+        <menu id="sfc1" name="校园新事件" url="/news" icon="" />
+        <menu id="sfc2" name="随机点名" url="/rollCall" icon="" />
+    </menu>
+</menus>

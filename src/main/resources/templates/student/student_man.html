@@ -1,0 +1,249 @@
+<style>
+    .myTbhead {
+        background: #393D49;
+        color: #F0F0F0;
+    }
+    .man-container {
+        margin-top: 10px;
+    }
+</style>
+
+<div id="student-man" class="man-container">
+    <!-- 表头按钮组 -->
+    <div class="layui-row">
+
+        <div class="layui-col-md6 layui-row">
+            <div class="layui-col-md6" style="padding-right: 8px;">
+                <input type="text" name="title" required lay-verify="required" placeholder="按姓名/学号搜索" autocomplete="off"
+                       class="layui-input">
+            </div>
+            <div class="layui-col-md3 layui-row">
+                <div class="layui-col-md6" style="padding-left: 8px; padding-right: 4px;">
+                    <form class="layui-form layui-inline">
+                        <select name="sex" lay-verify="required" lay-search="">
+                            <option value="">性别</option>
+                            <option>男</option>
+                            <option>女</option>
+                        </select>
+                    </form>
+                </div>
+                <div class="layui-col-md6" style="padding-left: 4px; padding-right: 8px">
+                    <form class="layui-form layui-inline">
+                        <select name="grade" lay-verify="required" lay-search="">
+                            <option value="">年级</option>
+                            <option>初中一年级</option>
+                            <option>初中二年级</option>
+                            <option>初中三年级</option>
+                            <option>高中一年级</option>
+                            <option>高中二年级</option>
+                            <option>高中三年级</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <button class="layui-btn">搜索</button>
+            </div>
+        </div>
+
+        <div class="layui-col-md6 layui-row">
+            <div class="layui-col-md-offset8" style="float:right;">
+                <button class="layui-btn">导入</button>
+                <button class="layui-btn" @click="openStuEditModal('add')">添加</button>
+                <button class="layui-btn layui-btn-danger">删除</button>
+            </div>
+        </div>
+
+    </div>
+    <!--表格 -->
+    <div>
+        <table class="layui-table" id="dataTable">
+            <colgroup>
+                <col width="150">
+                <col width="150">
+                <col width="150">
+                <col width="150">
+                <col width="150">
+                <col width="150">
+                <col width="150">
+                <col width="150">
+                <col>
+                <col width="150">
+            </colgroup>
+            <thead class="myTbhead">
+            <tr>
+                <th class="myTbhead">学号</th>
+                <th class="myTbhead">姓名</th>
+                <th class="myTbhead">性别</th>
+                <th class="myTbhead">年龄</th>
+                <th class="myTbhead">所在班级</th>
+                <th class="myTbhead">班主任</th>
+                <th class="myTbhead">所在年级</th>
+                <th class="myTbhead">年级主任</th>
+                <th class="myTbhead">备注</th>
+                <th class="myTbhead">编辑</th>
+            </tr>
+            </thead>
+            <tbody v-for="student in stuBaseInfo.infoArray">
+            <tr>
+                <td>{{student.sno}}</td>
+                <td>{{student.name}}</td>
+                <td>{{student.sex}}</td>
+                <td>{{student.age}}</td>
+                <td>{{student.clazzName}}</td>
+                <td>{{student.clazzMasterName}}</td>
+                <td>{{student.gradeName}}</td>
+                <td>{{student.gradeMasterName}}</td>
+                <td v-if="student.remark!=null&&student.remark!=''">{{student.remark}}</td>
+                <td v-if="student.remark==null||student.remark==''">暂无</td>
+                <td>
+                    <button class="layui-btn layui-btn-sm" style="float: left;margin-left: 5%;">修改</button>
+                    <button class="layui-btn layui-btn-sm layui-btn-danger" style="float: right;margin-right: 5%;">删除</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- ./表格 -->
+    <!-- 分页 -->
+    <div style="text-align: center;">
+        <div id="pagging"></div>
+    </div>
+    <!-- ./分页 -->
+
+    <!-- 添加/修改学生基本信息 -->
+    <div id="stuEditModal" v-show="stuEditModal.show">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-block" style="width: 50%;">
+                    <input type="text" name="name" required lay-verify="required" placeholder="学生姓名" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">出身日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="birthday" id="birthday" required lay-verify="date|required"
+                           placeholder="请选择出生日期" autocomplete="off" class="layui-input">
+                </div>
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="sex" value="男" title="男">
+                    <input type="radio" name="sex" value="女" title="女" checked>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">选择年级</label>
+                <div class="layui-input-inline">
+                    <select name="gradeId" lay-verify="required" lay-search="">
+                        <option value="">点击获取年级列表</option>
+                        <option value="1">初一</option>
+                        <option value="2">初二</option>
+                        <option value="3">初三</option>
+                    </select>
+                </div>
+                <label class="layui-form-label">选择班级</label>
+                <div class="layui-input-inline">
+                    <select name="clazzId" lay-verify="required" lay-search="">
+                        <option value="">请先选择年级</option>
+                        <option value="1">layer</option>
+                        <option value="2">form</option>
+                        <option value="3">layim</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <textarea name="remark" placeholder="请输入内容" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="stuEdit">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    var vue = new Vue({
+        el : "#student-man",
+        data : {
+            stuBaseInfo : {
+                infoArray : null,
+            },
+            stuEditModal : {
+                show : false,
+                actionType : "add", //add添加 update更新
+            }
+        },
+        methods : {
+            openStuEditModal : function(actionType){
+                var modalTitle = "";
+                if (actionType == 'add'){
+                    this.stuEditModal.actionType = actionType;
+                    modalTitle = "添加学生";
+                }else if (actionType == 'update'){
+                    this.stuEditModal.actionType = actionType
+                    modalTitle = "更新学生信息"
+                }else{
+                    return ;
+                }
+                layer.open({
+                    type: 2,
+                    title: modalTitle,
+                    //content: $('#stuEditModal'),
+                    content: ["${ctxPath}/happy-study/studentMan/"+actionType+"-baseinfo", "no"], //获取html 不出现滚动条
+                    area: ['700px', '500px'],
+                    success: function () {
+                        //弹出成功后的回调
+                        vue.stuEditModal.show = true;
+                    }
+                })
+            },
+            listForm : function () {
+                $.get("${ctxPath}/happy-study/studentMan/list", {}, response=>{
+                    var state = response.state;
+                    if (state==0){
+                        console.log(response.description);
+                        return ;
+                    }
+                    this.stuBaseInfo.infoArray = response.resData;
+                    console.log(vue.stuBaseInfo.infoArray);
+                })
+            }
+        },
+        mounted : function () {
+            layui.use('form', function () {
+
+            })
+            layui.use(['laypage', 'layer'], function () {
+                var laypage = layui.laypage;
+                var layer = layui.layer;
+
+                laypage.render({
+                    elem: 'pagging',
+                    count: 100, //数据总数
+                    layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip'],
+                    jump: function (obj) {
+                        console.log(obj);
+                    }
+                    /**
+                     * first: '首页',
+                     last: '尾页',
+                     prev: '<em>←</em>',
+                     next: '<em>→</em>'
+                     */
+                });
+            })
+
+            //加载学生基本信息
+            this.listForm();
+
+        }
+    })
+</script>

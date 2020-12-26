@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages= {"com.happystudy2.happystudy2management"})
-@MapperScan(basePackages = {"com.happystudy2.happystudy2management.dao"})
+@MapperScan(basePackages = "com.happystudy2.happystudy2management.dao")
 public class HappyStudy2ManagementApplication extends SpringBootServletInitializer {
 
     @Override

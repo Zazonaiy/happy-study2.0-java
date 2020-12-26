@@ -2,8 +2,10 @@ package com.happystudy2.happystudy2management.constants.exception;
 
 import com.happystudy2.happystudy2management.constants.enums.errorEnum.BaseErrorEnum;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class BussinessExcecption extends RuntimeException{
 
     /**
