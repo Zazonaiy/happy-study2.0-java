@@ -1,0 +1,88 @@
+
+<div class="container-fluid">
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <label>学号: {{student.sno}}</label>
+        </div>
+        <div class="col-4">
+            <label>姓名: {{student.name}}</label>
+        </div>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <label>性别: {{student.sex}}</label>
+        </div>
+        <div class="col-4">
+            <label>年龄: {{student.age}}</label>
+        </div>
+    </div>
+    <hr class="simple" color="#6f5499" />
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <label>班级: {{student.clazzName}}</label>
+        </div>
+        <div class="col-4">
+            <label>班主任: {{student.clazzMasterName}}</label>
+        </div>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <label>年级: {{student.gradeName}}</label>
+        </div>
+        <div class="col-4">
+            <label>年级类型: {{student.gradeType}}</label>
+
+        </div>
+    </div>
+    <label>年级主任: {{student.gradeMasterName}}</label>
+    <hr class="simple" color="#6f5499" />
+
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <label>父亲: {{student.fatherName}}</label>
+        </div>
+        <div class="col-4">
+            <label>父亲联系方式: {{student.fatherPhone}}</label>
+        </div>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <label>母亲: {{student.motherName}}</label>
+        </div>
+        <div class="col-4">
+            <label>母亲联系方式: {{student.motherPhone}}</label>
+        </div>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <label>紧急联系人: {{student.emContactName}}</label>
+        </div>
+        <div class="col-4">
+            <label>紧急联系人联系方式: {{student.emContactPhone}}</label>
+        </div>
+    </div>
+    <hr class="simple" color="#6f5499" />
+    <div class="row justify-content-xl-center">
+        <div class="col-12">
+            <label>备注: {{student.remark}}</label>
+        </div>
+
+    </div>
+
+
+
+</div>
+
+<script>
+    var modalVue = new Vue({
+        el : "#modal-content",
+        data : {
+            student : null,
+        },
+        methods : {
+            test : function () {
+                alert("!");
+            }
+        },
+    })
+</script>

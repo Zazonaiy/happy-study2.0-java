@@ -16,14 +16,20 @@ import javax.persistence.Table;
 @Table(name = "grade_team")
 public class GradePO extends BasePO {
 
-    @Column(name = "name")
-    private Integer id;
+    @Column(name = "g_no")
+    private Integer gNo;
 
     @Column(name = "name")
     private String name;
 
+    @Column(name = "grade_type")
+    private Integer gradeType;
+
     @Column(name = "grade_master_id")
     private String gradeMasterId;
+
+    @Column(name = "grade_master_name")
+    private String gradeMasterName;
 
     @Column(name = "enter_study_time")
     private String enterStudyTime;

@@ -1,15 +1,17 @@
 package com.happystudy2.happystudy2management;
 
-import org.mybatis.spring.annotation.MapperScan;
+//import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
+import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages= {"com.happystudy2.happystudy2management"})
-@MapperScan(basePackages = "com.happystudy2.happystudy2management.dao")
+@org.mybatis.spring.annotation.MapperScan(basePackages = "com.happystudy2.happystudy2management.dao")
+@MapperScan(value = "com.happystudy2.happystudy2management.dao")
 public class HappyStudy2ManagementApplication extends SpringBootServletInitializer {
 
     @Override

@@ -29,6 +29,15 @@ public class PaginationParam {
     @ApiModelProperty("每页大小")
     private Integer pageSize;
 
+    @ApiModelProperty("根据什么排序")
+    private String orderBy;
+
+    @ApiModelProperty("升序asc 降序desc")
+    private String orderWay;
+
     @ApiModelProperty("总记录数")
     private Long totalCount;
+
+    @ApiModelProperty("分页后有多少页")
+    private Integer pageCount;
 }

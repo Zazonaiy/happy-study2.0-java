@@ -10,12 +10,12 @@
 <div style="padding-top: 20px;">
     <p id="actionTag" hidden>${action}</p>
     <div id="stuEditModal">
-        <form class="layui-form" action="">
+        <form class="layui-form" action="" lay-filter="studentEditForm">
             <div class="layui-form-item">
                 <label class="layui-form-label">姓名</label>
                 <div class="layui-input-block" style="width: 45%;">
                     <input type="text" name="name" required lay-verify="required|name" placeholder="学生姓名" autocomplete="off"
-                           class="layui-input">
+                           class="layui-input" v-model="name">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -32,8 +32,8 @@
                 <div class="layui-inline">
                     <label class="layui-form-label" style="padding-left: 0px;">学生性别</label>
                     <div class="layui-input-block">
-                        <input type="radio" name="sex" value="男" title="男">
-                        <input type="radio" name="sex" value="女" title="女" checked>
+                        <input type="radio" name="sex" value="男" title="男" checked lay-filter="sexBox">
+                        <input type="radio" name="sex" value="女" title="女" lay-filter="sexBox">
                     </div>
                 </div>
             </div>
@@ -41,54 +41,170 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">选择年级</label>
                 <div class="layui-input-inline">
-                    <select name="gradeId" lay-verify="required" lay-search="">
+                    <select name="gradeId" lay-verify="required" lay-search="" id="gradeSelect" lay-filter="gradeSelect">
                         <option value="">点击获取年级列表</option>
-                        <option value="1">初一</option>
-                        <option value="2">初二</option>
-                        <option value="3">初三</option>
+                        <option v-for="grade in gradeList" :value="grade.id">{{grade.gradeName}} - {{grade.id}}</option>
                     </select>
                 </div>
                 <label class="layui-form-label">选择班级</label>
                 <div class="layui-input-inline">
-                    <select name="clazzId" lay-verify="required" lay-search="">
-                        <option value="">请先选择年级</option>
-                        <option value="1">layer</option>
-                        <option value="2">form</option>
-                        <option value="3">layim</option>
+                    <select name="clazzId" lay-verify="required" lay-search="" id="clazzSelect" lay-filter="clazzSelect"
+                            disabled>
+                        <option value="">请先选择班级</option>
+                        <option v-for="clazz in clazzList" :value="clazz.id">{{clazz.clazzName}} - {{clazz.id}}</option>
                     </select>
                 </div>
             </div>
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;margin-bottom: 30px;">
+                <legend></legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <label class="layui-form-label">父亲姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="fatherName" required lay-verify="name" placeholder="父亲姓名" autocomplete="off"
+                           class="layui-input" v-model="fatherName">
+                </div>
+                <label class="layui-form-label">联系方式</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="fatherPhone" required lay-verify="phone" placeholder="父亲手机号码" autocomplete="off"
+                           class="layui-input" v-model="fatherPhone">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">母亲姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="motherName" required lay-verify="name" placeholder="母亲姓名" autocomplete="off"
+                           class="layui-input" v-model="motherName">
+                </div>
+                <label class="layui-form-label">联系方式</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="motherPhone" required lay-verify="phone" placeholder="母亲手机号码" autocomplete="off"
+                           class="layui-input" v-model="motherPhone">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">紧急联系人姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="emContactName" required lay-verify="name" placeholder="紧急联系人姓名" autocomplete="off"
+                           class="layui-input" v-model="emContactName">
+                </div>
+                <label class="layui-form-label">联系方式</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="emContactPhone" required lay-verify="phone" placeholder="紧急联系人手机号码" autocomplete="off"
+                           class="layui-input" v-model="emContactPhone">
+                </div>
+            </div>
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;margin-bottom: 30px;">
+                <legend></legend>
+            </fieldset>
             <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">备注</label>
                 <div class="layui-input-block" style="width: 500px;">
-                    <textarea name="remark" placeholder="请输入内容" class="layui-textarea"></textarea>
+                    <textarea name="remark" placeholder="请输入内容" class="layui-textarea" v-model="remark"></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit lay-filter="stuEdit">立即提交</button>
+                    <button class="layui-btn" lay-submit lay-filter="stuEdit" >立即提交</button>
                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                 </div>
             </div>
+
+
         </form>
     </div>
 </div>
 
 <script>
+    function child(student){
+
+
     var formVue = new Vue({
         el: "#stuEditModal",
         data : {
             form : null,
             actionType : null,
+            gradeList : null,
+            gradeId : "",
+            clazzList : null,
+            clazzId : "",
+            sex : 0,
+            remark : "",
+            name : "",
+            birthday : "",
+            fatherName : "",
+            fatherPhone : "",
+            motherName : "",
+            motherPhone : "",
+            emContactName : "",
+            emContactPhone : "",
+            studentId : null,
+            updateStudent : null,
         },
         methods : {
+            getGradeList : function () {
+                $.ajax({
+                    url : "${ctxPath}/happy-study/studentMan/editdata/baseinfo/add",
+                    type : 'get',
+                    async : false,
+                    success : response=>{
+                        var resData = response.resData
+                        this.gradeList = resData[0].gradeList;
+                        console.log(this.gradeList);
+                    }
+                })
+                //$.get("${ctxPath}/happy-study/studentMan/editdata/baseinfo/add", {}, response=>{
+                //    var resData = response.resData
+                //    console.log(resData);
+                //    formVue.gradeList = resData[0].gradeList;
+                //})
+            },
+            getClazzList : function () {
+                var gradeId = formVue.gradeId;
+                console.log(gradeId)
+                if (gradeId==undefined || gradeId==null || gradeId==""){
+                    return ;
+                }
 
+                $.ajax({
+                    url : "${ctxPath}/happy-study/studentMan/editdata/baseinfo/add/"+gradeId,
+                    type : 'get',
+                    async : false,
+                    success : (response)=>{
+                        var resData = response.resData
+                        console.log(resData);
+                        this.clazzList = resData[0].clazzList;
+                    }
+                })
+
+            },
+            loadStudent : function(stu){
+                //console.log(this.updateStudent)
+
+                if (stu!=undefined && stu!=null){
+                    this.name = stu.name;
+                    this.sex = stu.sex;
+                    this.studentId = stu.id;
+
+                }
+            }
         },
         mounted : function () {
             this.actionType = $("#actionTag").text();
             console.log(this.actionType);
+
+            this.getGradeList();
+            this.loadStudent(student);
+
         }
     })
+
+    function renderForm(){
+        layui.use('form', function () {
+            var form = layui.form;
+            form.render();
+        })
+    }
 
     layui.use(['form', 'layedit', 'laydate'], function () {
         var form = layui.form
@@ -99,10 +215,126 @@
         console.log(laydate);
         formVue.form = form;
         formVue.editIndex = layedit.build('editor')
+
         //日期
         laydate.render({
-            elem: '#date'
+            elem: '#date',
+            trigger: 'click',
+            done : function(value, date, endDate){
+                console.log(value);
+                //console.log(date);
+                //console.log(endDate);
+                formVue.birthday = value;
+            }
         });
+
+        //注册select框
+        form.on('select(gradeSelect)', function (data) {
+            formVue.gradeId = data.value;
+
+            //请求clazzList参数，更新clazzSelect的option
+            formVue.getClazzList();
+
+            if (formVue.gradeId==''){
+                $("#clazzSelect").attr("disabled", "disabled");
+            }else{
+                $("#clazzSelect").removeAttr("disabled");
+            }
+            //form.render('select','clazzSelect');
+            setTimeout(()=>{
+                form.render();
+            }, 50)
+            //renderForm()
+        });
+        form.on('select(clazzSelect)', function (data) {
+            //console.log("!!!")
+            formVue.clazzId = data.value;
+            console.log(formVue.clazzId);
+        })
+
+        //sexBox点击事件
+        form.on('radio(sexBox)', function (data) {
+            console.log(data.value);
+            var sex = data.value;
+            if (sex == "男"){
+                formVue.sex = 0;
+            }else if (sex == "女"){
+                formVue.sex = 1;
+            }else{
+                layer.msg("性别错误", {icon: 5});
+            }
+            console.log(formVue.sex);
+        })
+
+        form.on('submit(studentEditForm)', function(data){
+            //layer.msg(JSON.stringify(data.field));
+            var name = formVue.name;
+            var birthday = formVue.birthday;
+            var sex = formVue.sex;
+            var gradeId = formVue.gradeId;
+            var clazzId = formVue.clazzId;
+            var remark = formVue.remark;
+            var studentId = formVue.studentId;
+            var fatherName = formVue.fatherName;
+            var fatherPhone = formVue.fatherPhone;
+            var motherName = formVue.motherName;
+            var motherPhone = formVue.motherPhone;
+            var emContactName = formVue.emContactName;
+            var emContactPhone = formVue.emContactPhone;
+
+            var dataParam = {
+                id : studentId,
+                name : name,
+                birthday : birthday,
+                sex : sex,
+                gradeId : gradeId,
+                clazzId : clazzId,
+                remark : remark,
+                fatherName : fatherName,
+                fatherPhone : fatherPhone,
+                motherName : motherName,
+                motherPhone : motherPhone,
+                emContactName : emContactName,
+                emContactPhone : emContactPhone
+            }
+
+            //debugger
+            $.ajax({
+                url : "${ctxPath}/happy-study/studentMan/doEdit/baseinfo/"+formVue.actionType,
+                type : "post",
+                data : JSON.stringify(dataParam),
+                contentType: "application/json;charset=utf-8",
+                async : false,
+                success : (response)=>{
+                    layer.msg(response.description, {
+                        end : function () {
+                            if (response.state==1){
+                                console.log("消息框已关闭");
+                            }
+                        }
+                    });
+
+                    setTimeout(()=>{
+                        parent.layer.closeAll('iframe');
+                    }, 1500)
+                    /**
+                     * layer.msg(response.description+response.state, function(){
+                        if (response.state==1){
+                            layer.closeAll(2);
+                            console.log("!!!")
+                        }
+                    });
+                     */
+                },
+                error : ()=>{
+                    layer.msg("请求失败", {icon: 5});
+                }
+            });
+
+
+            return false;
+            //return false;
+        })
 
         //自定义验证规则
         form.verify({
@@ -120,4 +352,6 @@
             }
         });
     })
+    }
+
 </script>

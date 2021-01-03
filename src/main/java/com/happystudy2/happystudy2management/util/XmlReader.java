@@ -44,6 +44,9 @@ public class XmlReader {
                         subMenuModel.setName(subMenuElem.attributeValue("name"));
                         subMenuModel.setIcon(subMenuElem.attributeValue("icon"));
                         subMenuModel.setUrl(menuModel.getUrl()+subMenuElem.attributeValue("url"));
+                        subMenuModel.setPreId(menuModel.getId());
+                        subMenuModel.setPreName(menuModel.getName());
+                        subMenuModel.setPreUrl(menuModel.getUrl());
 
                         //三级菜单
                         List<Element> subSubMenuList = subMenuElem.elements();
@@ -54,6 +57,9 @@ public class XmlReader {
                                 subSubMenuModel.setName(subSubMenuElem.attributeValue("name"));
                                 subSubMenuModel.setIcon(subSubMenuElem.attributeValue("icon"));
                                 subSubMenuModel.setUrl(subMenuModel.getUrl()+subSubMenuElem.attributeValue("url"));
+                                subSubMenuModel.setPreId(subMenuModel.getId());
+                                subSubMenuModel.setPreName(subMenuModel.getName());
+                                subSubMenuModel.setPreUrl(subMenuModel.getUrl());
                                 subMenuModel.getSubMenuList().add(subSubMenuModel);
                             }
                         }

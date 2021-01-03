@@ -12,6 +12,8 @@ import tk.mybatis.mapper.annotation.Version;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import java.sql.Timestamp;
+import java.util.Date;
 
 
 @Data
@@ -21,20 +23,20 @@ public abstract class BasePO {
     @Id
     @KeySql(genId = UUIDGenerator.class)
     @Column(name = "id")
-    private Integer id;
+    private String id;
 
     @Column(name = "create_user")
     private String createUser;
 
     @Column(name = "create_time")
-    private String createTime;
+    private Date createTime;
 
     @Column(name = "last_modify_user")
-    @Version(nextVersion = DefaultNextVersion.class)
     private String lastModifyUser;
 
     @Column(name = "last_modify_time")
-    private String lastModifyTime;
+    @Version(nextVersion = DefaultNextVersion.class)
+    private Date lastModifyTime;
 
     @Column(name = "deleted")
     private Boolean deleted;

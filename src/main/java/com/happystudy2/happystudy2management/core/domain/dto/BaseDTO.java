@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.MappedSuperclass;
+import java.util.Date;
 
 @Data
 //@MappedSuperclass
@@ -16,11 +17,11 @@ import javax.persistence.MappedSuperclass;
 //@AllArgsConstructor
 //@NoArgsConstructor
 public abstract class BaseDTO {
-    private Integer id;
+    private String id;
     private String createUser;
     private String createTime;
-    private String lastModifyUser;
-    private String lastModifyTime;
+    private Date lastModifyUser;
+    private Date lastModifyTime;
     private Boolean deleted;
     private String remark;
 }

@@ -7,7 +7,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.apache.commons.compress.utils.Lists;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 
 @Data
@@ -28,24 +30,24 @@ public class MetaData {
      * 过滤信息
      */
     @ApiModelProperty("过滤信息")
-    private SortedMap<String, String> filter;
+    private Map<String, String> filter;
 
-    @ApiModelProperty("扩展字段")
+    @ApiModelProperty("扩展字段 搜索框模糊匹配用")
     private List<String> ext;
 
     public void MetaData(PaginationParam paginationParam){
         this.paginationParam = paginationParam;
-        this.filter = Maps.newTreeMap();
+        this.filter = Maps.newHashMap();
         this.ext = Lists.newArrayList();
     }
 
-    public void Metadata(PaginationParam paginationParam, SortedMap<String, String> filter){
+    public void Metadata(PaginationParam paginationParam, Map<String, String> filter){
         this.paginationParam = paginationParam;
         this.filter = filter;
         this.ext = Lists.newArrayList();
     }
 
-    public void Metadata(PaginationParam paginationParam, SortedMap<String, String> filter, List<String> ext){
+    public void Metadata(PaginationParam paginationParam, Map<String, String> filter, List<String> ext){
         this.paginationParam = paginationParam;
         this.filter = filter;
         this.ext = ext;

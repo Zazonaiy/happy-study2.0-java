@@ -72,4 +72,7 @@ public class StudentInfoViewPO extends BasePO {
 
     @Column(name = "grade_master_name")
     private String gradeMasterName;
+
+    @Column(name = "grade_type")
+    private Integer gradeType;
 }

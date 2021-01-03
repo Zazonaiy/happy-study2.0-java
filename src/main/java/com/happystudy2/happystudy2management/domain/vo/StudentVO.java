@@ -35,4 +35,18 @@ public class StudentVO extends BaseVO {
 
     private String gradeMasterName;
 
+    private String gradeType;
+
+    private String fatherName;
+
+    private String fatherPhone;
+
+    private String motherName;
+
+    private String motherPhone;
+
+    private String emContactName;
+
+    private String emContactPhone;
+
 }

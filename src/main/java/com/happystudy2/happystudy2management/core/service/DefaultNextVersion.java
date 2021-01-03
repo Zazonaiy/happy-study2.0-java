@@ -1,5 +1,7 @@
 package com.happystudy2.happystudy2management.core.service;
 
+import com.happystudy2.happystudy2management.core.util.TimeUtils;
+import com.happystudy2.happystudy2management.util.TimeUtil;
 import tk.mybatis.mapper.version.NextVersion;
 import tk.mybatis.mapper.version.VersionException;
 
@@ -20,7 +22,10 @@ public class DefaultNextVersion implements NextVersion {
         }else if (current instanceof Timestamp){
             return new Timestamp(System.currentTimeMillis());
         }else if (current instanceof Date){
-            return new Date(System.currentTimeMillis());
+            //return new Date(TimeUtil.TIME_FORMAT.format(System.currentTimeMillis()));
+            //return TimeUtils.now();
+            return "'"+TimeUtil.TIME_FORMAT.format(new Date(System.currentTimeMillis()))+"'";
+            //return null;
         }else {
             throw new VersionException("默认的 NextVersion 不支持当前使用的版本号");
         }

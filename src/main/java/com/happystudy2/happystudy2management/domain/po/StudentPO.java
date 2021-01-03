@@ -18,6 +18,9 @@ import javax.persistence.Table;
 @Table(name = "student")
 public class StudentPO extends BasePO {
 
+    @Column(name = "s_no")
+    private Integer sNo;
+
     @Column(name = "name")
     private String name;
 
@@ -32,9 +35,6 @@ public class StudentPO extends BasePO {
 
     @Column(name = "resp_type")
     private Integer respType;
-
-    @Column(name = "s_no")
-    private Integer sNo;
 
     @Column(name = "clazz_master_id")
     private String clazzMasterId;

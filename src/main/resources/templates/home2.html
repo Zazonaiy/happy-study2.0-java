@@ -18,6 +18,11 @@
     <link rel="stylesheet" href="${ctxPath}/frame/bootstrap-4.5.0-dist/css/bootstrap-grid.css">
     <link rel="stylesheet" href="${ctxPath}/frame/bootstrap-4.5.0-dist/css/bootstrap-reboot.css">
     -->
+    <script src="${ctxPath}/frame/bootstrap-4.5.0-dist/js/bootstrap.bundle.js" ></script>
+    <link rel="stylesheet" href="${ctxPath}/frame/bootstrap-4.5.0-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="${ctxPath}/frame/bootstrap-4.5.0-dist/css/bootstrap-grid.css">
+    <link rel="stylesheet" href="${ctxPath}/frame/bootstrap-4.5.0-dist/css/bootstrap-reboot.css">
+    <link rel="stylesheet" href="${ctxPath}/font/bootstrap-icons-1.2.2/font/bootstrap-icons.css">
     <!-- anime -->
     <script type="text/javascript" src="${ctxPath}/frame/anime/anime.min.js"></script>
 
@@ -28,6 +33,26 @@
     }
 </style>
 <body class="layui-layout-body">
+<!-- Modal -->
+<div class="modal fade" id="common-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="z-index: 1050;">
+        <div class="modal-content" id="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="common-modal-head">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="common-modal-body">
+                ...
+            </div>
+            <div class="modal-footer" id="common-modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="layui-layout layui-layout-admin" id="outter">
     <div class="layui-header">
         <div class="layui-logo">${sysTitle}</div>
@@ -82,8 +107,8 @@
             <div style="padding-bottom: 15px">
                 <span class="layui-breadcrumb">
                 <a href="/">首页</a>
-                <a href="/demo/">演示</a>
-                <a><cite>导航元素</cite></a>
+                <a href="javascript://" v-show="navHistory.first.name!=''" @click="navigateToUrl(navHistory.first.url)">{{navHistory.first.name}}</a>
+                <a v-show="navHistory.second.name!=''"><cite>{{navHistory.second.name}}</cite></a>
                 </span>
             </div>
 
@@ -99,6 +124,8 @@
     </div>
 </div>
 
+</body>
+</html>
 
 <script>
     var menusArray = null;
@@ -109,14 +136,61 @@
             icon : "iconfont icon-daohangshouye",
             currentUser : null,
             loadingFont : "<i class='layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop' " +
-                "style='font-size: 30px'></i> loading"
+                "style='font-size: 30px'></i> loading",
+            navHistory : {
+                first : {
+                    name : "",
+                    url : ""
+                },
+                second : {
+                    name : "",
+                    url : ""
+                },
+                //preFirst : "",
+                //preSecond : ""
+            }
         },
         methods : {
-            navigateTo : function(menu){
-                //console.log(menu);
-                if (menu.subMenuList.length!=0){
+            renderNav : function(){
+                setTimeout(()=>{
+                    layui.use("element", function () {
+                        var element = layui.element;
+                        //var layFilter = $("#nav").attr("lay-filter")
+                        element.render()
+                    })
+                },10)
+            },
+            navigateToUrl : function(menuUrl){
+                var url = "${ctxPath}"+menuUrl;
+                if (menuUrl == "/happy-study/home"){
+                    $(location).attr("href", url);
                     return;
                 }
+                var loading = vue.loadingFont;
+                console.log(loading);
+                console.log(url);
+                $("#maindiv").empty();
+                $("#maindiv").html(loading);
+                $("#maindiv").load(url);
+            },
+            navigateTo : function(menu){
+                var navHistory = this.navHistory;
+                if (menu.level==2){
+                    navHistory.first.name = menu.preName;
+                    navHistory.second.name = menu.name;
+                    navHistory.first.url = menu.preUrl;
+                }
+                if (menu.subMenuList.length!=0){
+                    //navHistory.preFirst = navHistory.first
+                    navHistory.first.name = "";
+                    navHistory.second.name = "";
+                    navHistory.first.url = "";
+                    //this.renderNav();
+                    return ;
+                }
+                //debugger
+                //console.log(menu);
+
                 var menuUrl = menu.url;
                 var url = "${ctxPath}"+menuUrl;
 
@@ -130,6 +204,8 @@
                 $("#maindiv").empty();
                 $("#maindiv").html(loading);
                 $("#maindiv").load(url);
+
+                //this.renderNav();
             },
             getMenu : function(){
                 $.get("${ctxPath}/happy-study/getMenu", {}, response=>{
@@ -170,5 +246,3 @@
 
 
 </script>
-</body>
-</html>

@@ -16,6 +16,9 @@ public class MenuModel {
     private String icon;
     private String url;
     private Integer level;
+    private String preId;
+    private String preName;
+    private String preUrl;
     private List<MenuModel> subMenuList;
 
     public MenuModel (Integer level){

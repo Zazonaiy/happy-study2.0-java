@@ -12,7 +12,7 @@ import javax.persistence.MappedSuperclass;
 @Data
 @ApiModel("VO超类")
 public abstract class BaseVO {
-    private Integer id;
+    private String id;
     //private String createUser;
     //private String createTime;
     //private String lastModifyUser;
