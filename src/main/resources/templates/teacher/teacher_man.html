@@ -1,0 +1,543 @@
+<link rel="stylesheet" href="${ctxPath}/css/man.css">
+
+<div id="teacher-man" class="container-fluid man-container">
+    <!-- 表头按钮 -->
+    <div class="row tb-head-btn-group">
+        <div class="input-pane col-3">
+            <input type="text" name="title" required lay-verify="required" placeholder="按教师号/名搜索" autocomplete="off"
+                   class="layui-input" id="filterInput" v-model="pageParam.filter.keyword">
+        </div>
+        <div class="row col-3">
+            <div class="col" style="padding-left: 8px; padding-right: 4px;">
+                <form class="layui-form layui-inline">
+                    <select name="gradeType" lay-search="" id="gradeTypeSelect" lay-filter="gradeTypeSelect">
+                        <option value="">初中/高中</option>
+                        <option v-for="type in gradeTypeArray" :value="type.typeCode">{{type.typeDescription}}</option>
+                    </select>
+                </form>
+            </div>
+            <div class="col" style="padding-left: 4px; padding-right: 8px">
+                <form class="layui-form layui-inline">
+                    <select name="teacherTypeSelect" lay-search="" id="teacherTypeSelect" lay-filter="teacherTypeSelect">
+                        <option value="">教师类型</option>
+                        <option v-for="type in teacherTypeArray" :value="type.typeCode">{{type.typeDescription}}</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+        <div class="col-1">
+            <button class="layui-btn" @click="selectIt()">搜索</button>
+        </div>
+        <div class="col">
+            <div class=" row" style="float:right;">
+                <button class="layui-btn col" @click="excelImport()">导入</button>
+                <button class="layui-btn col" @click="openEditModal('add', null)">添加</button>
+                <button class="layui-btn layui-btn-danger col" @click="deleteBatch()">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 表格 -->
+    <div id="tablePane" class="row" style="width: 100%;">
+        <div class="col-xl-12" style="padding: 0px;">
+            <table class="layui-table" id="dataTable">
+                <colgroup>
+                    <col width="50">
+                    <col width="150">
+                    <col width="150">
+                    <col width="150">
+                    <col width="150">
+                    <col width="150">
+                    <col width="150">
+                    <col width="150">
+                    <col>
+                    <col width="150">
+                </colgroup>
+                <thead class="myTbhead">
+                <tr>
+                    <th class="myTbhead" id="headCheck">
+                        <input type="checkbox" name="" lay-skin="primary" id="checkAll" style="text-align: center;" class="layui-form-checkbox"
+                               v-model="checkBox.isCheckAll" @change="checkAll()"></th>
+                    <th class="myTbhead">教师编号
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('tNo', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('tNo', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">教师名称
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('name', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('name', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">性别
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('sex', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('sex', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">年龄
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('birthday', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('birthday', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">教师类型
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('teacherType', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('teacherType', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">所属年级
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('gradeType', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('gradeType', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">授课数量</th>
+                    <th class="myTbhead">备注</th>
+                    <th class="myTbhead">编辑</th>
+                </tr>
+                </thead>
+                <tbody v-for="teacher in baseInfo.infoArray">
+                <tr>
+                    <td><input type="checkbox" name="" lay-skin="primary" class="layui-form-checkbox"
+                               v-model="checkBox.checkedValues" :value="teacher.id"></td>
+                    <td><a href="#" @click="openBTModal(teacher)">{{teacher.tno}}</a></td>
+                    <td>{{teacher.name}}</td>
+                    <td>{{teacher.sex}}</td>
+                    <td>{{teacher.age}}</td>
+                    <td>{{teacher.teacherType.typeDescription}}</td>
+                    <td>{{teacher.gradeName}}</td>
+                    <td>{{teacher.courseCount}}</td>
+                    <td v-if="teacher.remark!=null&&teacher.remark!=''">{{teacher.remark}}</td>
+                    <td v-if="teacher.remark==null||teacher.remark==''">暂无</td>
+                    <td>
+                        <button class="layui-btn layui-btn-sm" style="float: left;margin-left: 5%;"
+                                @click="openEditModal('update', teacher)">修改</button>
+                        <button class="layui-btn layui-btn-sm layui-btn-danger" style="float: right;margin-right: 5%;"
+                                @click="deleteConfirm(teacher)">删除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="navPane" class="row" style="width: 100%;">
+        <div class="col d-flex justify-content-center">
+            <nav aria-label="Page navigation" id="nav" class="d-flex align-items-center">
+                <ul class="pagination d-flex align-items-center" style="margin-bottom: 0px;">
+                    <li class="page-item">
+                        <a class="page-link" href="javascript://" @click="goToPage(1)">首页</a>
+                    </li>
+                    <li class="page-item" v-bind:class="{ 'disabled' : pageParam.currentPage==1 }">
+                        <a class="page-link" href="#" :aria-disabled="pageParam.currentPage==1"
+                           @click="goToPage(--pageParam.currentPage)">上一页</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-disabled="true"
+                           v-show="baseInfo.pageBeforeOmit">...</a>
+                    </li>
+
+                    <li class="page-item" v-for="i in pageParam.pageCount" v-bind:class="{'active' : i==pageParam.currentPage}"
+                    ><a class="page-link" href="#" @click="goToPage(i)">{{i}} <span class="sr-only" v-if="i==pageParam.currentPage">(current)</span></a></li>
+
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-disabled="true"
+                           v-show="baseInfo.pageAfterOmit">...</a>
+                    </li>
+                    <li class="page-item" v-bind:class="{ 'disabled' : pageParam.currentPage==pageParam.pageCount }">
+                        <a class="page-link" href="#" :aria-disabled="pageParam.currentPage==pageParam.pageCount"
+                           @click="goToPage(++pageParam.currentPage)">下一页</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="javascript://" @click="goToPage(pageParam.pageCount)">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- 每页大小 -->
+            <div style="padding-left: 8px;">
+                <form class="form-inline">
+                    <label class="my-1 mr-2" for="pageSizeBox">每页大小</label>
+                    <select class="custom-select my-1 mr-sm-2" id="pageSizeBox" @change="setPageSize()">
+                        <option v-for="pageSize in pageParam.pageSizeList" :value="pageSize">{{pageSize}}</option>
+                    </select>
+
+                    <a href="javascript://" class="reload" style="font-size: 26px; color: #3c3c3c;" @click="goToPage(1)">
+                        <i class="bi bi-arrow-repeat d-flex align-items-center" ></i>
+                    </a>
+                    <p class="text-monospace d-flex align-items-center" style="margin-bottom: 0px;">共 {{pageParam.totalCount}} 条数据</p>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- excel导入 -->
+    <div v-show="false">
+        <form id="import_form"  enctype="multipart/form-data" method="post" action="" v-show="false">
+            <div style="margin-top: 5px" v-show="false">
+                选择Excel文件：<input type="file" id="excel" name="excel" @change="doExcelImport"
+                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" /></div>
+        </form>
+
+        <!-- Button trigger modal -->
+        <button type="button" id="modalTrigger" class="btn btn-primary" data-toggle="modal" data-target="#common-modal" hidden>
+            Launch demo modal
+        </button>
+    </div>
+
+</div>
+
+<script>
+    var teacherVue = new Vue({
+        el : "#teacher-man",
+        data : {
+            baseInfo : {
+                infoArray : null,
+                select : "",
+                pageBeforeOmit : false,
+                pageAfterOmit : true,
+            },
+            editModal : {
+                show : false,
+                actionType : "add",
+            },
+            checkBox : {
+                isCheckAll : false,
+                checkedValues : [],
+            },
+            pageParam : {
+                currentPage : 1,
+                pageSize : 5,
+                pageSizeList : [5, 10, 20, 50],
+                pageCount : 0,
+                totalCount : 0,
+                pageBuffer : [],
+                pageBeforeOmit : false,
+                pageAffterOmit : true,
+                orderBy : "",
+                orderWay : "asc",
+                filter : {
+                    gradeType : "",
+                    gradeId : "",
+                    teacherType : "",
+                    sex : "",
+                    keyword : "",
+                },
+                ext : [],
+                isFirstTime : true,
+            },
+            gradeTypeArray : [],
+            teacherTypeArray : [],
+        },
+        methods : {
+            orderIt : function(orderBy, orderWay){
+                this.pageParam.orderBy = orderBy;
+                this.pageParam.orderWay = orderWay;
+                this.listForm();
+            },
+            selectIt : function(){
+                var keyword = this.pageParam.filter.keyword;
+                var gradeType = this.pageParam.filter.gradeType;
+
+                if (keyword !=undefined && keyword != null && keyword != ""){
+                    this.pageParam.ext[0] = keyword;
+                    //this.pageParam.ext.push("test");
+                }
+
+                this.listForm();
+            },
+            openBTModal : function(teacher){
+                var url = "${ctxPath}/happy-study/teacherMan/showTeacherMsg"
+                var loading = vue.loadingFont;
+                $("#common-modal-head").text(teacher.name);
+                $("#common-modal-body").empty();
+                $("#modalTrigger").trigger("click");
+                $("#common-modal-body").html(loading);
+                //debugger;
+                $("#common-modal-body").load(url, {teacher}, function () {
+                    modalVue.teacher = teacher;
+                });
+            },
+            doExcelImport : function(){
+                if ($("#excel").val()==""){
+                    return ;
+                }
+                var formData = new FormData($("#import_orm")[0]);
+                formData.append("file", $("#excel")[0].files);
+
+                $.ajax({
+                    type : "post",
+                    url : "${ctxPath}/happy-study/teacherMan/import",
+                    processData : false,
+                    contentType : false,
+                    data : formData,
+                    success : response=>{
+                        if (response.state == 2){
+                            layer.msg(response.description, {
+                                icon : 3
+                            });
+
+                        }else if (response.state == 1){
+                            teacherVue.listForm();
+                            layer.msg(response.description, {
+                                end : function () {
+                                },
+                                icon : 1
+                            });
+
+                        }else{
+                            layer.msg(response.description, {
+                                icon : 7
+                            })
+
+                        }
+                        $("#excel").val("");
+                        return ;
+                    },
+                    error : function (err) {
+                        layer.msg(err, {
+                            icon : 7
+                        })
+                        $("#excel").val("");
+                        return ;
+                    }
+                })
+            },
+            excelImport : function(){
+                $("#excel").trigger("click");
+            },
+            setPageSize : function () {
+                if (this.pageParam.pageSize == $("#pageSizeBox").val()){
+                    return ;
+                }
+                this.pageParam.pageSize = $("#pageSizeBox").val();
+                this.pageParam.currentPage = 1;
+
+                this.listForm();
+            },
+            goToPage : function(page){
+                if (page == 1){
+
+                }
+                if (page==this.pageParam.pageCount){
+                    $("")
+                }
+                if (page < 1){
+                    alert("第一页了");
+                    return ;
+                }
+                if (page > this.pageParam.pageCount){
+                    alert("已经到底了");
+                    return ;
+                }
+                this.pageParam.currentPage = page;
+                this.listForm();
+            },
+            deleteBatch : function(){
+                checkedValues = this.checkBox.checkedValues;
+                if (checkedValues == undefined || checkedValues == null || checkedValues.length == 0){
+                    layer.msg("还未勾选删除的教师", {
+                        icon : 3
+                    });
+                    return ;
+                }
+
+                var ids = "";
+                for (var i = 0; i < checkedValues.length; i++){
+                    ids += checkedValues[i]+"-";
+                }
+                var msg = "确认要删除的教师 "+checkedValues.length+" 个 吗？"
+                layer.confirm(msg, {
+                    btn:['确定', '取消']
+                }, function (index) {
+                    layer.close(index);
+                    teacherVue.deleteSome(ids);
+                }, function () {
+                    alert("2");
+                })
+            },
+            checkAll : function () {
+                var array = this.baseInfo.infoArray;
+                //debugger
+                if (array != null){
+                    if (this.checkBox.isCheckAll){
+                        this.checkBox.checkedValues = [];
+                        for (var i = 0; i < array.length; i++){
+                            this.checkBox.checkedValues.push(array[i].id);
+                        }
+                    }else {
+                        this.checkBox.checkedValues = [];
+                    }
+                }
+            },
+            deleteSome : function(teacherIdList){
+                $.ajax({
+                    url : "${ctxPath}/happy-study/teacherMan/doEdit/baseinfo/delete",
+                    type : "delete",
+                    data : {teacherIds : teacherIdList},
+                    async : false,
+                    success : (response)=>{
+                        if (response.state == 1){
+                            teacherVue.listForm();
+                            layer.msg(response.description, {
+                                end : function () {
+                                },
+                                icon : 1
+                            });
+                        }else if (response.state == 2) {
+                            teacherVue.listForm();
+                            layer.msg(response.description, {
+                                icon : 3
+                            });
+                        }else {
+                            layer.msg(response.description, {
+                                icon : 7
+                            })
+                        }
+                    },
+                    error : ()=>{
+                        layer.msg("请求错误", {
+                            icon : 2
+                        });
+                    }
+                })
+            },
+            deleteConfirm : function(teacher){
+                var msg = "确认要删除教师\r\n 编号:"+teacher.tNo+"\r\n 名称:"+teacher.name+"\r\n 吗？"
+                layer.confirm(msg, {
+                    btn:['确定', '取消']
+                }, function (index) {
+                    layer.close(index);
+                    teacherVue.deleteSome(teacher.id);
+                }, function () {
+                    //alert("2");
+                })
+            },
+            openEditModal : function(actionType, teacher){
+                //debugger
+                var modalTitle = "";
+                if (actionType == 'add'){
+                    this.editModal.actionType = actionType;
+                    modalTitle = "添加教师";
+                }else if (actionType == 'update'){
+                    this.editModal.actionType = actionType
+                    modalTitle = "更新教师信息"
+                }else{
+                    return ;
+                }
+                layer.open({
+                    type: 2,
+                    title: modalTitle,
+                    //content: $('#stuEditModal'),
+                    content: ["${ctxPath}/happy-study/teacherMan/editform/baseinfo/"+actionType, "no"], //获取html 不出现滚动条
+                    area: ['700px', '500px'],
+                    success: function (layero, index) {
+                        //debugger
+                        //弹出成功后的回调
+                        teacherVue.editModal.show = true;
+
+                        if (teacher!=null){
+                            if (teacher.sex=="男"){
+                                teacher.sex = 0;
+                            }else{
+                                teacher.sex = 1;
+                            }
+                        }
+                        //向子模块传递，子模块的vue写在这里面的，如果这类不掉用，子模块的vue无法加载
+                        //！！！！！！注意！！！！！！
+                        var iframe = window['layui-layer-iframe' + index];
+                        //debugger
+                        iframe.child(teacher);
+                        //debugger
+                    },
+                    end : function () {
+                        //弹框销毁后刷新表格
+                        teacherVue.listForm();
+                    }
+                })
+            },
+            refreshCheckBox : function(){
+                this.checkBox.isCheckAll=false;
+                this.checkBox.checkedValues=[];
+                this.baseInfo.infoArray = null;
+            },
+            listForm : function () {
+                this.refreshCheckBox();
+
+                var pageParam = this.pageParam;
+
+                var paginationParam = {
+                    page : pageParam.currentPage,
+                    pageSize : pageParam.pageSize,
+                    orderBy : pageParam.orderBy,
+                    orderWay : pageParam.orderWay,
+                    totalCount : 0
+                }
+                var filter = {
+                    gradeType : pageParam.filter.gradeType,
+                }
+
+                var ext = pageParam.ext;
+
+                $.ajax({
+                    type : "get",
+                    url : "${ctxPath}/happy-study/teacherMan/list",
+                    async: false,
+                    data : {paginationParam : paginationParam,
+                        filter : filter,
+                        ext : ext},
+                    success : (response)=>{
+                        var state = response.state;
+                        if (state==0){
+                            console.log(response.description);
+                            return 0;
+                        }
+                        this.baseInfo.infoArray = response.resData[0].resList;
+                        //debugger
+                        this.pageParam.totalCount = response.resData[0].paginationParam.totalCount;
+                        this.pageParam.pageCount = response.resData[0].paginationParam.pageCount;
+                        console.log(this.baseInfo.infoArray);
+                        this.baseInfo.pageAfterOmit = this.pageParam.pageCount - this.pageParam.currentPage > 3 ? true : false;
+                        this.baseInfo.pageBeforeOmit = this.pageParam.currentPage - 1 > 3 ? true : false;
+
+                        return this.pageParam.totalCount;
+                    }
+                })
+                //debugger
+            },
+            listGradeType : function () {
+                $.get("${ctxPath}/happy-study/studentMan/list/gradeType", {}, response=>{
+                    var state = response.state;
+                    //debugger
+                    if (state==0){
+                        console.log(response.description);
+                        return ;
+                    }
+                    this.gradeTypeArray = response.resData;
+                })
+            },
+            listTeacherType : function(){
+                $.get("${ctxPath}/happy-study/teacherMan/list/teacherType", {}, response=>{
+                    var state = response.state;
+                    //debugger
+                    if (state==0){
+                        console.log(response.description);
+                        return ;
+                    }
+                    this.teacherTypeArray = response.resData;
+
+                })
+            },
+            test : function () {
+                alert("!!");
+            }
+        },
+        mounted : function(){
+            //this.test();
+            this.listForm();
+            this.listGradeType();
+            this.listTeacherType();
+        }
+    })
+
+    layui.use("form", function () {
+        var form = layui.form;
+
+        form.on("select(gradeTypeSelect)", function(data){
+            teacherVue.pageParam.filter.gradeType = data.value;
+            teacherVue.listForm();
+        })
+
+        form.on("select(teacherTypeSelect)", function (data) {
+            teacherVue.pageParam.filter.teacherType = data.value;
+            teacherVue.listForm();
+        })
+
+        form.render();
+    })
+</script>

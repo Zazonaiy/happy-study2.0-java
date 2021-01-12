@@ -1,0 +1,236 @@
+<!-- jQuery 3 -->
+<script type="text/javascript" src="${ctxPath}/frame/jquery/jquery-3.4.1.js"></script>
+<!-- vue -->
+<script type="text/javascript" src="${ctxPath}/frame/vue/vue.min.js"></script>
+<!-- layui -->
+<script src="${ctxPath}/frame/layui-v2.5.7/layui/layui.js"></script>
+<link rel="stylesheet" href="${ctxPath}/frame/layui-v2.5.7/layui/css/layui.css">
+
+<div style="padding-top: 20px;">
+    <p id="actionTag" hidden>${action}</p>
+    <div id="teacherEditModal">
+        <form class="layui-form" action="" lay-filter="teacherEditForm">
+            <div class="layui-form-item">
+                <label class="layui-form-label">教师名称</label>
+                <div class="layui-input-block" style="width: 45%;">
+                    <input type="text" name="name" required lay-verify="required|name" placeholder="教师名称" autocomplete="off"
+                           class="layui-input" v-model="name">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">出生日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="birthday" id="birthday" required lay-verify="date|required"
+                               placeholder="请选择出生日期" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">教师性别</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="sex" value="男" title="男" checked lay-filter="sexBox">
+                        <input type="radio" name="sex" value="女" title="女" lay-filter="sexBox">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">教师类型</label>
+                    <div class="layui-input-inline"><select name="teacherType" lay-verify="required" lay-search="" id="teacherTypeSelect" lay-filter="teacherTypeSelect" disabled>
+                        <option value="4">一般任课教师</option>
+                    </select></div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">年级团队</label>
+                    <div class="layui-input-inline">
+                        <select name="teacherId" lay-verify="required" lay-search="" id="gradeSelect" lay-filter="gradeSelect"
+                        >
+                            <option value="">获取年级列表</option>
+                            <option v-for="grade in gradeList" :value="grade.id">{{grade.gradeName}} - {{grade.id}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;margin-bottom: 30px;">
+                <legend></legend>
+            </fieldset>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block" style="width: 500px;">
+                    <textarea name="remark" placeholder="请输入内容" class="layui-textarea" v-model="remark"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="teacherEdit" >立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    function child(teacher){
+        var formVue = new Vue({
+            el : "#teacherEditModal",
+            data : {
+                form : null,
+                actionType : null,
+                teacherTypeList : null,
+                teacherType : {
+                    typeCode:4,
+                    typeDescription:"一般任课教师",
+                },
+                gradeList : null,
+                grade : null,
+                id : "",
+                name : "",
+                sex : "男",
+                birthday : "",
+                gradeId : "",
+                remark : "",
+            },
+            methods : {
+                getTeacherTypeList : function () {
+                    $.get("${ctxPath}/happy-study/teacherMan/list/teacherType", {}, response=>{
+                        var state = response.state;
+                        if (state==0){
+                            console.log(response.description);
+                            return ;
+                        }
+                        this.teacherTypeList = response.resData;
+                        //debugger
+                    })
+                },
+                getGradeList : function () {
+                    $.ajax({
+                        url : "${ctxPath}/happy-study/studentMan/editdata/baseinfo/add",
+                        type : 'get',
+                        async : false,
+                        success : response=>{
+                            var resData = response.resData
+                            this.gradeList = resData[0].gradeList;
+                            console.log(this.gradeList);
+                        }
+                    })
+                },
+                loadTeacher : function (teacher) {
+                    if (teacher!=undefined && teacher!=null){
+                        this.id = teacher.id;
+                        this.name = teacher.name;
+                        this.teacherType = teacher.teacherType;
+                        this.sex = teacher.sex;
+                        this.gradeId = teacher.gradeId;
+                        this.grade = {
+                            id : teacher.gradeId,
+                            name : teacher.gradeName
+                        };
+                        this.birthday = teacher.birthday;
+                        this.remark = teacher.remark;
+
+
+                    }
+                }
+            },
+            mounted : function () {
+                this.actionType = $("#actionTag").text();
+                this.getGradeList();
+                this.loadTeacher(teacher);
+            }
+        })
+
+        function renderForm() {
+            layui.use('form', function(){
+                var form = layui.form;
+                form.render();
+            })
+        }
+
+        layui.use(['form', 'layedit', 'laydate'], function () {
+            var form = layui.form
+                ,layer = layui.layer
+                ,layedit = layui.layedit
+                ,laydate = layui.laydate;
+
+            formVue.form = form;
+            laydate.render({
+                elem : "#birthday",
+                trigger : "click",
+                done : function (value, date, endDate) {
+                    formVue.birthday = value;
+                }
+            })
+
+            //注册select框
+            form.on("select(teacherTypeSelect)", function(data){
+                formVue.teacherType = data.value;
+                formVue.render();
+            })
+            form.on("select(gradeSelect)", function(data){
+                formVue.gradeId = data.value;
+                //formVue.render();
+            })
+
+            form.on("submit(teacherEditForm)", function(data){
+                var id = formVue.id;
+                var name = formVue.name;
+                var sex = formVue.sex == "女" ? 1 : 0;
+                var birthday = formVue.birthday;
+                var gradeId = formVue.gradeId;
+                var teacherType = formVue.teacherType.typeCode;
+                //debugger
+                var remark = formVue.remark;
+                //debugger
+                var dataParam = {
+                    id : id,
+                    name : name,
+                    sex : sex,
+                    birthday : birthday,
+                    gradeId : gradeId,
+                    teacherType : teacherType,
+                    remark : remark,
+                }
+                //debugger
+
+                $.ajax({
+                    url : "${ctxPath}/happy-study/teacherMan/doEdit/baseinfo/"+formVue.actionType,
+                    type : "post",
+                    data : JSON.stringify(dataParam),
+                    contentType : "application/json;charset=utf-8",
+                    async : false,
+                    success : response=>{
+                        layer.msg(response.description, {
+                            end : function(){
+
+                            }
+                        })
+
+                        setTimeout(()=>{
+                            parent.layer.closeAll('iframe');
+                        }, 1500)
+                    },
+                    error : ()=>{
+                        layer.msg("请求失败", {icon : 5});
+                    }
+                })
+
+                return false;
+            })
+
+            form.verify({
+                name: function(value){
+                    if(value.length < 2){
+                        return '名字至少2字';
+                    }
+                }
+                ,pass: [
+                    /^[\S]{6,12}$/
+                    ,'密码必须6到12位，且不能出现空格'
+                ]
+
+            })
+        })
+    }
+</script>

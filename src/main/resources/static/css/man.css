@@ -1,0 +1,22 @@
+.myTbhead {
+    background: #393D49;
+    color: #F0F0F0;
+}
+.man-container {
+    margin-top: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+.reload :hover{
+    font-size: 32px;
+    color: #95999c;
+}
+
+.tb-head-btn-group{
+    width: 100%;
+}
+
+.tb-head-btn-group .input-pane{
+    padding-right: 8px;
+    padding-left: 0px;
+}

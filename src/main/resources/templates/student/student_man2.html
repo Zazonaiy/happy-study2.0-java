@@ -12,6 +12,12 @@
         font-size: 32px;
         color: #95999c;
     }
+    .orderTagPane {
+        width: 16px;
+        height: 100%;
+        padding-top: 1%;
+        padding-bottom: 1%;
+    }
 </style>
 
 <div id="student-man" class="container-fluid man-container" style="margin-left: 0px;margin-right: 0px;">
@@ -24,7 +30,7 @@
         <div class="col row">
             <div class="col" style="padding-left: 8px; padding-right: 4px;">
                 <form class="layui-form layui-inline">
-                    <select name="sex"lay-search="">
+                    <select name="sex" lay-search="" id="sexSelect" lay-filter="sexSelect">
                         <option value="">性别</option>
                         <option value="0">男</option>
                         <option value="1">女</option>
@@ -33,23 +39,18 @@
             </div>
             <div class="col" style="padding-left: 4px; padding-right: 8px">
                 <form class="layui-form layui-inline">
-                    <select name="grade"lay-search="">
-                        <option value="">初中/高中</option>
+                    <select name="gradeType" lay-search="" id="gradeTypeSelect" lay-filter="gradeTypeSelect">
+                        <option v-if="gradeType.typeCode==''" value="">初中/高中</option>
+                        <option v-if="gradeType.typeCode!=''" :value="gradeType.typeCode">{{gradeType.typeDescription}}</option>
                         <option v-for="type in gradeTypeArray" :value="type.typeCode">{{type.typeDescription}}</option>
                     </select>
                 </form>
             </div>
             <div class="col" style="padding-left: 4px; padding-right: 8px">
                 <form class="layui-form layui-inline">
-                    <select name="grade"lay-search="">
+                    <select name="grade"lay-search=""  id="gradeSelect" lay-filter="gradeSelect">
                         <option value="">年级</option>
-                        <option>初一</option>
-                        <option>初二</option>
-                        <option>初三</option>
-                        <option>高一</option>
-                        <option>高二</option>
-                        <option>高三</option>
-
+                        <option v-for="grade in gradeArray" :value="grade.id">{{grade.gradeName}}</option>
                     </select>
                 </form>
             </div>
@@ -89,10 +90,18 @@
                     <th class="myTbhead" id="headCheck">
                         <input type="checkbox" name="" lay-skin="primary" id="checkAll" style="text-align: center;" class="layui-form-checkbox"
                                v-model="stuCheck.isCheckAll" @change="checkAll()"></th>
-                    <th class="myTbhead">学号</th>
-                    <th class="myTbhead">姓名</th>
-                    <th class="myTbhead">性别</th>
-                    <th class="myTbhead">年龄</th>
+                    <th class="myTbhead">学号
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('sNo', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('sNo', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">姓名
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('name', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('name', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">性别
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('sex', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('sex', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">年龄
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('birthday', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('birthday', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
                     <th class="myTbhead">所在班级</th>
                     <th class="myTbhead">班主任</th>
                     <th class="myTbhead">所在年级</th>
@@ -214,6 +223,7 @@
                 actionType : "add", //add添加 update更新
             },
             gradeTypeArray : null,
+            gradeArray : null,
             page : {
                 current : 1,
             },
@@ -231,8 +241,8 @@
                 pageBuffer : [],
                 pageBeforeOmit : false,
                 pageAffterOmit : true,
-                orderBy : "asc",
-                orderWay : "",
+                orderBy : "",
+                orderWay : "asc",
                 filter : {
                     gradeType : "",
                     gradeId : "",
@@ -244,16 +254,31 @@
             },
             layUI : {
                 laypage : null,
-            }
+            },
+            gradeType : {
+                typeCode : "",
+                typeDescription : "",
+            },
 
         },
         methods : {
+            orderIt : function(orderBy, orderWay){
+                this.pageParam.orderBy = orderBy;
+                this.pageParam.orderWay = orderWay;
+                this.listForm();
+            },
             selectIt : function(){
-                var keyword = pageParam.filter.keyword;
-                var gradeType = pageParam.filter.gradeType;
-                var gradeId = pageParam.filter.gradeId
-                var sex = pageParam.filter.sex;
+                var keyword = this.pageParam.filter.keyword;
+                var gradeType = this.pageParam.filter.gradeType;
+                var gradeId = this.pageParam.filter.gradeId
+                var sex = this.pageParam.filter.sex;
 
+                if (keyword !=undefined && keyword != null && keyword != ""){
+                    this.pageParam.ext[0] = keyword;
+                    this.pageParam.ext.push("test");
+                }
+
+                this.listForm();
             },
             openBTModal : function(student){
                 var url = "${ctxPath}/happy-study/studentMan/showStuMsg"
@@ -484,6 +509,7 @@
                 var filter = {
                     gradeType : pageParam.filter.gradeType,
                     gradeId : pageParam.filter.gradeId,
+                    sex : pageParam.filter.sex
                 }
                 if (this.stuBaseInfo==undefined){
                     pageParam.ext.push("");
@@ -518,29 +544,87 @@
                 })
                 //debugger
             },
-            listGradeType : function () {
+            getGradeTypeList : function () {
                 $.get("${ctxPath}/happy-study/studentMan/list/gradeType", {}, response=>{
                     var state = response.state;
                     if (state==0){
                         console.log(response.description);
                         return ;
                     }
+
                     this.gradeTypeArray = response.resData;
-                    console.log(vue.gradeTypeArray);
+                    //debugger
                 })
-            }
+            },
+            getGradeList : function () {
+                var url = "${ctxPath}/happy-study/studentMan/editdata/baseinfo/add";
+                var gradeType = this.pageParam.filter.gradeType;
+                debugger
+                if (gradeType != ""){
+                    url = "${ctxPath}/happy-study/studentMan/list/gradeType/"+gradeType;
+                }
+                $.ajax({
+                    url : url,
+                    type : 'get',
+                    async : false,
+                    success : response=>{
+                        var resData = response.resData
+                        this.gradeArray = resData[0].gradeList;
+                        debugger
+                        console.log(this.gradeList);
+                    }
+                })
+            },
         },
         mounted : function () {
             //加载学生基本信息
             this.listForm();
             //加载年级信息
-            this.listGradeType();
+            this.getGradeTypeList();
+            this.getGradeList();
         }
     })
 
     layui.use('form', function () {
         var form = layui.form;
+
+        form.on("select(sexSelect)", function(data){
+            vue.pageParam.filter.sex = data.value;
+            vue.listForm();
+            //alert(data);
+        })
+
+        form.on("select(gradeTypeSelect)", function(data){
+            vue.pageParam.filter.gradeType = data.value;
+            vue.getGradeList();
+            vue.listForm();
+            vue.pageParam.filter.gradeId = vue.gradeArray[0].gradeId;
+            vue.gradeType.typeCode = "";
+            vue.gradeType.typeDescription = "";
+            setTimeout(()=>{
+                form.render();
+            },50)
+        })
+
+        form.on("select(gradeSelect)", function(data){
+            vue.pageParam.filter.gradeId = data.value;
+            vue.gradeType.typeCode = data.value;
+            var gradeArray = vue.gradeArray
+            for (var i = 0; i < gradeArray.length; i++){
+                if (gradeArray[i].gradeType.typeCode==data.value){
+                    vue.gradeType.typeCode = data.value;
+                    vue.gradeType.typeDescription = gradeArray[i].gradeType.typeDescription;
+                }
+            }
+            vue.listForm();
+
+            setTimeout(()=>{
+                form.render();
+            },50)
+        })
+
         form.render();
+
     })
 
 </script>

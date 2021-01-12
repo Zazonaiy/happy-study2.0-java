@@ -15,15 +15,22 @@ public class ObjFormatter {
     @Autowired
     private TypeMapper typeMapper;
 
-    public MetaData MapToMetaData(Map<String, Object> map){
-        Object mapObj = map.get("filter");
-        Map<String, Object> filterObjMap = JSONObject.parseObject(JSON.toJSONString(mapObj));
+    public MetaData MapToMetaData(Map<String, Object> map, String ...filterKey){
+        //Object mapObj = map.get("filter[]");
+        //Map<String, Object> filterObjMap = JSONObject.parseObject(JSON.toJSONString(mapObj));
+        //Map<String, String> filterMap = new HashMap<>();
+        //if (Objects.nonNull(filterObjMap)){
+        //    if (Objects.nonNull(filterObjMap.keySet())){
+        //        for (String key : filterObjMap.keySet()){
+        //            filterMap.put(key, filterObjMap.get(key).toString());
+        //        }
+        //    }
+        //}
         Map<String, String> filterMap = new HashMap<>();
-        if (Objects.nonNull(filterObjMap)){
-            if (Objects.nonNull(filterObjMap.keySet())){
-                for (String key : filterObjMap.keySet()){
-                    filterMap.put(key, filterObjMap.get(key).toString());
-                }
+        for (String key : filterKey){
+            Object filter = map.get("filter["+key+"]");
+            if (Objects.nonNull(filter)){
+                filterMap.put(key, filter.toString());
             }
         }
 
@@ -40,17 +47,18 @@ public class ObjFormatter {
             paginationParam.setOrderBy(map.get("paginationParam[orderBy]").toString());
         }
         if (Objects.nonNull(map.get("paginationParam[orderWay]"))){
-            paginationParam.setOrderBy(map.get("paginationParam[orderWay]").toString());
+            paginationParam.setOrderWay(map.get("paginationParam[orderWay]").toString());
         }
 
-        Object listObj = map.get("ext");
+        Object listObj = map.get("ext[]");
         List<String> extList = Lists.newArrayList();
         if (Objects.nonNull(listObj)){
-            if (listObj instanceof ArrayList<?>){
-                for (Object extObj : extList){
-                    extList.add(String.class.cast(extObj));
-                }
-            }
+            //if (listObj instanceof ArrayList<?>){
+            //    for (Object extObj : extList){
+            //        extList.add(String.class.cast(extObj));
+            //    }
+            //}
+            extList.add(listObj.toString());
         }
 
         return MetaData.builder().filter(filterMap).paginationParam(paginationParam).ext(extList).build();

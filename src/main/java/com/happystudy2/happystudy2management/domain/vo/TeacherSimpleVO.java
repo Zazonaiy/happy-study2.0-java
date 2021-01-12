@@ -8,8 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class GradeTypeVO extends BaseVO {
-    private Integer typeCode;
+public class TeacherSimpleVO extends BaseVO {
 
-    private String typeDescription;
+    private String name;
+
+    private Integer tNo;
 }

@@ -17,16 +17,13 @@ import com.happystudy2.happystudy2management.core.service.ObjFormatter;
 import com.happystudy2.happystudy2management.core.service.TypeMapper;
 import com.happystudy2.happystudy2management.domain.dto.StudentEditDTO;
 import com.happystudy2.happystudy2management.domain.dto.StudentImportDTO;
-import com.happystudy2.happystudy2management.domain.po.StudentPO;
 import com.happystudy2.happystudy2management.domain.vo.*;
 import com.happystudy2.happystudy2management.factory.ResultDataFactory;
 import com.happystudy2.happystudy2management.service.ClazzService;
 import com.happystudy2.happystudy2management.service.GradeService;
 import com.happystudy2.happystudy2management.service.StudentService;
-import com.happystudy2.happystudy2management.util.JacksonUtils;
 import com.happystudy2.happystudy2management.util.ObjReflectUtil;
 import com.happystudy2.happystudy2management.util.StringBussinessUtil;
-import freemarker.template.Template;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -86,7 +83,7 @@ public class StudentController {
     @GetMapping("/list")
     @ResponseBody
     public ResultData<ListResultVO> list(@RequestParam Map<String, Object> paramMap){
-        MetaData metaData = objFormatter.MapToMetaData(paramMap);
+        MetaData metaData = objFormatter.MapToMetaData(paramMap, "sex", "gradeType", "gradeId");
         //List<StudentVO> studentVOList = studentService.listStudent(metaData);
 
         //List<StudentVO> test = studentService.pageHelperTest();
@@ -104,6 +101,20 @@ public class StudentController {
         StudentEditVO studentEditVO = StudentEditVO.builder().gradeList(gradeList).build();
 
         ResultDataFactory factory = new ResultDataFactory(studentEditVO);
+        return factory.success();
+    }
+
+    @GetMapping("/list/gradeType/{gradeType}")
+    @ResponseBody
+    public ResultData<StudentEditVO> listGradeByGradeType(@PathVariable("gradeType") String gradeType){
+        ResultDataFactory factory = new ResultDataFactory();
+        if (StringUtils.isBlank(gradeType)){
+            return factory.error("gradeType为空");
+        }
+
+        List<GradeVO> gradeVOList = gradeService.listByGradeType(Integer.parseInt(gradeType));
+        StudentEditVO studentEditVO = StudentEditVO.builder().gradeList(gradeVOList).build();
+        factory.addData(studentEditVO);
         return factory.success();
     }
 
@@ -255,10 +266,10 @@ public class StudentController {
 
     @GetMapping("/list/gradeType")
     @ResponseBody
-    public ResultData<GradeTypeVO> listGradeType(){
+    public ResultData<TypeVO> listGradeType(){
         ResultDataFactory factory = new ResultDataFactory();
         for (GradeTypeEnum gradeTypeEnum : GradeTypeEnum.values()){
-            factory.addData(GradeTypeVO.builder().typeCode(gradeTypeEnum.getCode()).typeDescription(gradeTypeEnum.getDescription()).build());
+            factory.addData(TypeVO.builder().typeCode(gradeTypeEnum.getCode()).typeDescription(gradeTypeEnum.getDescription()).build());
         }
 
         return factory.success();

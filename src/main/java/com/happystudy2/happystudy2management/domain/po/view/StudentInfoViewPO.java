@@ -58,6 +58,9 @@ public class StudentInfoViewPO extends BasePO {
     @Column(name = "clazz_name")
     private String clazzName;
 
+    @Column(name = "clazz_type")
+    private Integer clazzType;
+
     @Column(name = "clazz_master_name")
     private String clazzMasterName;
 

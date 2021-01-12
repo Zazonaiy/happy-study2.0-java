@@ -34,6 +34,15 @@ public class TeacherPO extends BasePO {
     @Column(name = "resp_type")
     private Integer respType;
 
+    @Column(name = "is_clazz_master")
+    private Boolean isClazzMaster;
+
+    @Column(name = "is_grade_master")
+    private Boolean isGradeMaster;
+
+    @Column(name = "is_school_master")
+    private Boolean isSchoolMaster;
+
     @Column(name = "grade_id")
     private String gradeId;
 

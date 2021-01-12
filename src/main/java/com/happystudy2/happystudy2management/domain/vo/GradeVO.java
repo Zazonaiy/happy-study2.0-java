@@ -3,6 +3,7 @@ package com.happystudy2.happystudy2management.domain.vo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.happystudy2.happystudy2management.core.domain.vo.BaseVO;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 
 @Data
 @Builder
@@ -25,4 +26,14 @@ public class GradeVO extends BaseVO {
     private String enterStudyTime;
 
     private String endStudyTime;
+
+    @Value("0")
+    private Integer studentCount;
+
+    @Value("0")
+    private Integer teacherCount;
+
+    @Value("0")
+    private Integer clazzCount;
+
 }

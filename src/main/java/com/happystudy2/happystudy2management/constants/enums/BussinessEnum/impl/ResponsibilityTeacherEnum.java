@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum ResponsibilityTeacherEnum implements BaseBussinessEnum {
 
-    //TODO : 暂且不做
-    ;
+    COMMON_TEACHER(1, "commonTeacher"),
+    CLAZZ_MASTER(10, "clazzMaster"),
+    GRADE_MASTER(20, "gradeMaster"),
+    SCHOOL_MASTER(30, "schoolMaster"),;
 
     private Integer code;
     private String description;

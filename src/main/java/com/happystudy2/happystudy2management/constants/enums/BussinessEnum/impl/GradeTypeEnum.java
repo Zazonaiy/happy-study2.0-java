@@ -5,13 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public enum GradeTypeEnum implements BaseBussinessEnum {
 
     MIDDLE(1, "初中"),
-    HIGH(2, "高中"),;
+    HIGH(2, "高中"),
+    NON(0, "暂无");
 
     private Integer code;
     private String description;
@@ -31,6 +34,9 @@ public enum GradeTypeEnum implements BaseBussinessEnum {
 
 
     public static String descriptionOf(Integer code){
+        if (Objects.isNull(code)){
+            return NON.description;
+        }
         if (code.equals(MIDDLE.code)){
             return MIDDLE.description;
         }else if (code.equals(HIGH.code)){

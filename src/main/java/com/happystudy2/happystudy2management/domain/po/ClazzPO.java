@@ -19,6 +19,9 @@ public class ClazzPO extends BasePO {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "clazz_type")
+    private Integer clazzType;
+
     @Column(name = "clazz_master_id")
     private String clazzMasterId;
 

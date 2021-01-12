@@ -8,4 +8,8 @@ public class CoreErrStatus {
     public static String JSON_PROCESSING_EXCEPTION = "0001";
 
 
+    /**
+     * 事务处理失败
+     */
+    public static String TRANSACTIONAL_FAILED_EXCEPTION = "1000";
 }

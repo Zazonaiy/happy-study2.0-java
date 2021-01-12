@@ -62,6 +62,19 @@ public class StudentServiceImpl implements StudentService {
             if (StringUtils.isNotBlank(metaData.getFilter().get("gradeId"))){
                 criteria.andEqualTo("gradeId", metaData.getFilter().get("gradeId"));
             }
+            if (StringUtils.isNotBlank(metaData.getFilter().get("sex"))){
+                criteria.andEqualTo("sex", Integer.parseInt(metaData.getFilter().get("sex")));
+            }
+        }
+
+        if (Objects.nonNull(metaData) && (!metaData.getExt().isEmpty())){
+            List<String> ext = metaData.getExt();
+            String e = "%"+ext.get(0)+"%";
+            if (!e.equals("")){
+                criteria.andLike("name", e);
+                criteria.orLike("sNo", e);
+            }
+
         }
 
         String orderBy = metaData.getPaginationParam().getOrderBy();
@@ -70,11 +83,13 @@ public class StudentServiceImpl implements StudentService {
         if (Objects.isNull(orderBy)){
             orderBy = "";
         }
-        if (Objects.nonNull(orderWay)){
+        if (Objects.nonNull(orderWay) && StringUtils.isNotBlank(orderBy)){
             if (orderWay.equalsIgnoreCase("desc")){
                 example.orderBy(orderBy).desc();
+                //orderBy += " desc";
             }else {
                 example.orderBy(orderBy).asc();
+                //orderBy += " asc";
             }
         }
 
