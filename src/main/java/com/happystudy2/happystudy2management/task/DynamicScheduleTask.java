@@ -1,16 +1,9 @@
 package com.happystudy2.happystudy2management.task;
 
-import com.happystudy2.happystudy2management.dao.TaskMapper;
-import com.happystudy2.happystudy2management.domain.po.TaskPO;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import com.happystudy2.happystudy2management.dao.task.TaskMapper;
+import com.happystudy2.happystudy2management.domain.po.task.TaskPO;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-import org.springframework.scheduling.support.CronTrigger;
-
-import java.time.LocalDateTime;
 
 //@Configuration
 //@EnableScheduling

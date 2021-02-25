@@ -9,15 +9,15 @@ import com.happystudy2.happystudy2management.core.domain.dto.ResultCop;
 import com.happystudy2.happystudy2management.core.domain.vo.MetaData;
 import com.happystudy2.happystudy2management.core.service.NoGenerator;
 import com.happystudy2.happystudy2management.core.service.TypeMapper;
-import com.happystudy2.happystudy2management.dao.ClazzMapper;
-import com.happystudy2.happystudy2management.dao.GradeMapper;
-import com.happystudy2.happystudy2management.dao.TeacherInfoViewMapper;
-import com.happystudy2.happystudy2management.dao.TeacherMapper;
+import com.happystudy2.happystudy2management.dao.clazz.ClazzMapper;
+import com.happystudy2.happystudy2management.dao.grade.GradeMapper;
+import com.happystudy2.happystudy2management.dao.teacher.TeacherInfoViewMapper;
+import com.happystudy2.happystudy2management.dao.teacher.TeacherMapper;
 import com.happystudy2.happystudy2management.domain.dto.TeacherEditDTO;
-import com.happystudy2.happystudy2management.domain.po.ClazzPO;
-import com.happystudy2.happystudy2management.domain.po.GradePO;
-import com.happystudy2.happystudy2management.domain.po.TeacherPO;
-import com.happystudy2.happystudy2management.domain.po.view.TeacherInfoViewPO;
+import com.happystudy2.happystudy2management.domain.po.clazz.ClazzPO;
+import com.happystudy2.happystudy2management.domain.po.grade.GradePO;
+import com.happystudy2.happystudy2management.domain.po.teacher.TeacherPO;
+import com.happystudy2.happystudy2management.domain.po.teacher.view.TeacherInfoViewPO;
 import com.happystudy2.happystudy2management.domain.vo.ListResultVO;
 import com.happystudy2.happystudy2management.domain.vo.TeacherVO;
 import com.happystudy2.happystudy2management.domain.vo.TypeVO;
@@ -217,6 +217,22 @@ public class TeacherServiceImpl implements TeacherService {
         res.setWarnTag(warnTag);
         return res;
     }
+
+    @Override
+    public TeacherPO queryByNo(Integer tNo) {
+        if (Objects.isNull(tNo)){
+            return null;
+        }
+
+        Example example = new Example(TeacherPO.class);
+        Example.Criteria criteria = example.createCriteria();
+
+        criteria.andEqualTo("deleted", false);
+        criteria.andEqualTo("tNo", tNo);
+
+        return teacherMapper.selectOneByExample(example);
+    }
+
     private boolean deleteTeacherResp(TeacherPO exist){
         if (exist.getIsGradeMaster()){
             String gradeId = exist.getGradeId();

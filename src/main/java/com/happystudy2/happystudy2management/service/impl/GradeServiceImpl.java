@@ -3,23 +3,27 @@ package com.happystudy2.happystudy2management.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.happystudy2.happystudy2management.constants.enums.BussinessEnum.impl.GradeTypeEnum;
-import com.happystudy2.happystudy2management.constants.enums.BussinessEnum.impl.ResponsibilityTeacherEnum;
 import com.happystudy2.happystudy2management.constants.enums.errorEnum.impl.BussinessErrorCodeEnum;
 import com.happystudy2.happystudy2management.constants.exception.BussinessExcecption;
 import com.happystudy2.happystudy2management.core.domain.dto.ResultCop;
 import com.happystudy2.happystudy2management.core.domain.vo.MetaData;
 import com.happystudy2.happystudy2management.core.service.NoGenerator;
 import com.happystudy2.happystudy2management.core.service.TypeMapper;
-import com.happystudy2.happystudy2management.dao.*;
+import com.happystudy2.happystudy2management.dao.clazz.ClazzMapper;
+import com.happystudy2.happystudy2management.dao.grade.GradeInfoViewMapper;
+import com.happystudy2.happystudy2management.dao.grade.GradeMapper;
+import com.happystudy2.happystudy2management.dao.grade.GradeSubjectSimpleViewMapper;
+import com.happystudy2.happystudy2management.dao.student.StudentMapper;
+import com.happystudy2.happystudy2management.dao.teacher.TeacherMapper;
 import com.happystudy2.happystudy2management.domain.dto.GradeEditDTO;
-import com.happystudy2.happystudy2management.domain.po.ClazzPO;
-import com.happystudy2.happystudy2management.domain.po.GradePO;
-import com.happystudy2.happystudy2management.domain.po.StudentPO;
-import com.happystudy2.happystudy2management.domain.po.TeacherPO;
-import com.happystudy2.happystudy2management.domain.po.view.GradeInfoViewPO;
-import com.happystudy2.happystudy2management.domain.po.view.StudentInfoViewPO;
+import com.happystudy2.happystudy2management.domain.po.clazz.ClazzPO;
+import com.happystudy2.happystudy2management.domain.po.grade.GradePO;
+import com.happystudy2.happystudy2management.domain.po.grade.view.GradeSubjectSimpleViewPO;
+import com.happystudy2.happystudy2management.domain.po.teacher.TeacherPO;
+import com.happystudy2.happystudy2management.domain.po.grade.view.GradeInfoViewPO;
 import com.happystudy2.happystudy2management.domain.vo.GradeVO;
 import com.happystudy2.happystudy2management.domain.vo.ListResultVO;
+import com.happystudy2.happystudy2management.domain.vo.SubjectSimpleVO;
 import com.happystudy2.happystudy2management.domain.vo.TeacherSimpleVO;
 import com.happystudy2.happystudy2management.service.ClazzService;
 import com.happystudy2.happystudy2management.service.GradeService;
@@ -46,6 +50,8 @@ public class GradeServiceImpl implements GradeService {
     private ClazzMapper clazzMapper;
     @Autowired
     private GradeInfoViewMapper gradeInfoViewMapper;
+    @Autowired
+    private GradeSubjectSimpleViewMapper gradeSubjectSimpleViewMapper;
     @Autowired
     private TypeMapper typeMapper;
     @Autowired
@@ -344,6 +350,25 @@ public class GradeServiceImpl implements GradeService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<SubjectSimpleVO> listExamSubject(String gradeId){
+        Example example = new Example(GradeSubjectSimpleViewPO.class);
+        Example.Criteria criteria = example.createCriteria();
+
+        criteria.andEqualTo("gradeId", gradeId);
+        List<GradeSubjectSimpleViewPO> gradeSubjectSimpleViewPOList = gradeSubjectSimpleViewMapper.selectByExample(example);
+
+        return typeMapper.mapList(gradeSubjectSimpleViewPOList, SubjectSimpleVO.class);
+    }
+
+    @Override
+    public GradeVO queryById(String gradeId) {
+        if (StringUtils.isBlank(gradeId)){
+            return null;
+        }
+        return typeMapper.map(gradeInfoViewMapper.selectByPrimaryKey(gradeId), GradeVO.class);
     }
 
 }

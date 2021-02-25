@@ -15,7 +15,7 @@ import com.happystudy2.happystudy2management.domain.vo.SubjectVO;
 import com.happystudy2.happystudy2management.domain.vo.TypeVO;
 import com.happystudy2.happystudy2management.factory.ResultDataFactory;
 import com.happystudy2.happystudy2management.service.SubjectService;
-import com.happystudy2.happystudy2management.service.impl.TaskService;
+import com.happystudy2.happystudy2management.service.TaskService;
 import com.happystudy2.happystudy2management.util.ObjReflectUtil;
 import com.happystudy2.happystudy2management.util.StringBussinessUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -40,10 +40,12 @@ public class SubjectController {
     @Autowired
     private TaskService taskService;
 
+
     @RequestMapping("")
     public String index() {
-        taskService.test();
-        taskService.test2();
+        //taskService.test();
+        //taskService.test2();
+        //WebSocket.sendMessage("消息来了");
         return "subject/subject_man";
     }
 

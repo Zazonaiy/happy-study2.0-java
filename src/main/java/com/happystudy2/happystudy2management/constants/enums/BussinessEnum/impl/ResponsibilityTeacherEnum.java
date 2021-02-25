@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public enum ResponsibilityTeacherEnum implements BaseBussinessEnum {
 
+    STUDENT(0, "student"),
     COMMON_TEACHER(1, "commonTeacher"),
     CLAZZ_MASTER(10, "clazzMaster"),
     GRADE_MASTER(20, "gradeMaster"),
@@ -29,5 +30,14 @@ public enum ResponsibilityTeacherEnum implements BaseBussinessEnum {
     @Override
     public String toString(){
         return String.valueOf(code);
+    }
+
+    public static ResponsibilityTeacherEnum codeOf(Integer code){
+        for (ResponsibilityTeacherEnum e : ResponsibilityTeacherEnum.values()){
+            if (e.getCode()==code){
+                return e;
+            }
+        }
+        return null;
     }
 }

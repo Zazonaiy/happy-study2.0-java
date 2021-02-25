@@ -3,7 +3,6 @@ package com.happystudy2.happystudy2management.service;
 import com.happystudy2.happystudy2management.core.domain.dto.ResultCop;
 import com.happystudy2.happystudy2management.core.domain.vo.MetaData;
 import com.happystudy2.happystudy2management.domain.dto.ClazzEditDTO;
-import com.happystudy2.happystudy2management.domain.po.ClazzPO;
 import com.happystudy2.happystudy2management.domain.vo.ClazzVO;
 import com.happystudy2.happystudy2management.domain.vo.ListResultVO;
 import com.happystudy2.happystudy2management.domain.vo.TeacherSimpleVO;

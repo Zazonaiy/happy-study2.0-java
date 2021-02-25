@@ -10,12 +10,15 @@ import com.happystudy2.happystudy2management.core.service.ObjFormatter;
 import com.happystudy2.happystudy2management.core.service.TypeMapper;
 import com.happystudy2.happystudy2management.domain.dto.GradeEditDTO;
 import com.happystudy2.happystudy2management.domain.dto.StudentEditDTO;
+import com.happystudy2.happystudy2management.domain.po.grade.view.GradeInfoViewPO;
 import com.happystudy2.happystudy2management.domain.vo.*;
 import com.happystudy2.happystudy2management.factory.ResultDataFactory;
 import com.happystudy2.happystudy2management.service.GradeService;
 import com.happystudy2.happystudy2management.util.ObjReflectUtil;
 import com.happystudy2.happystudy2management.util.StringBussinessUtil;
+import com.sun.xml.internal.txw2.output.ResultFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Controller
 @RequestMapping(UrlMap.GRADE_CONTROLLER)
@@ -35,7 +39,8 @@ public class GradeController {
     @Autowired
     private ObjFormatter objFormatter;
 
-
+    //@RequiresRoles("admin")
+    //@RequiresRoles(value={"admin", "teacher"})
     @RequestMapping("")
     public String index() { return "grade/grade_man"; }
 
@@ -138,6 +143,28 @@ public class GradeController {
         }
 
         return factory.success("删除成功: " + res.getDescription());
+    }
+
+    @GetMapping("/list/examSubject/{gradeId}")
+    @ResponseBody
+    public ResultData<SubjectSimpleVO> getExamSubjectByGradeId(@PathVariable("gradeId") String gradeId){
+        List<SubjectSimpleVO> subjectVOList = gradeService.listExamSubject(gradeId);
+
+        ResultDataFactory factory = new ResultDataFactory(subjectVOList);
+        return factory.success();
+    }
+
+    @GetMapping("query/studentCount/{gradeId}")
+    @ResponseBody
+    public ResultData<SubjectSimpleVO> getGradeStudentCount(@PathVariable("gradeId") String gradeId){
+        ResultDataFactory factory = new ResultDataFactory();
+        GradeVO gradeVO = gradeService.queryById(gradeId);
+        if (Objects.isNull(gradeVO)){
+            factory.error("缺少参数");
+        }
+
+        factory.addData(gradeVO.getStudentCount());
+        return factory.success();
     }
 
 

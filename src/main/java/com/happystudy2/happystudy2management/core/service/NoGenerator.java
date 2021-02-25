@@ -2,8 +2,24 @@ package com.happystudy2.happystudy2management.core.service;
 
 import com.happystudy2.happystudy2management.constants.exception.MyMissingFieldException;
 import com.happystudy2.happystudy2management.core.domain.po.BasePO;
-import com.happystudy2.happystudy2management.dao.*;
-import com.happystudy2.happystudy2management.domain.po.*;
+import com.happystudy2.happystudy2management.dao.clazz.ClazzMapper;
+import com.happystudy2.happystudy2management.dao.exam.ExamMapper;
+import com.happystudy2.happystudy2management.dao.exam.ExamRoomMapper;
+import com.happystudy2.happystudy2management.dao.grade.GradeMapper;
+import com.happystudy2.happystudy2management.dao.student.StudentMapper;
+import com.happystudy2.happystudy2management.dao.subject.SubjectMapper;
+import com.happystudy2.happystudy2management.dao.task.TaskMapper;
+import com.happystudy2.happystudy2management.dao.teacher.TeacherMapper;
+import com.happystudy2.happystudy2management.domain.dto.noGenerator.ExamRoomNoSimpleDTO;
+import com.happystudy2.happystudy2management.domain.po.clazz.ClazzPO;
+import com.happystudy2.happystudy2management.domain.po.exam.ExamPO;
+import com.happystudy2.happystudy2management.domain.po.exam.ExamRoomPO;
+import com.happystudy2.happystudy2management.domain.po.grade.GradePO;
+import com.happystudy2.happystudy2management.domain.po.student.StudentPO;
+import com.happystudy2.happystudy2management.domain.po.subject.SubjectPO;
+import com.happystudy2.happystudy2management.domain.po.task.TaskPO;
+import com.happystudy2.happystudy2management.domain.po.teacher.TeacherPO;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,13 +39,72 @@ public class NoGenerator {
     private ClazzMapper clazzMapper;
     @Autowired
     private SubjectMapper subjectMapper;
+    @Autowired
+    private ExamMapper examMapper;
+    @Autowired
+    private ExamRoomMapper examRoomMapper;
+    @Autowired
+    private TaskMapper taskMapper;
     private final static Integer TEACHER_HEAD = 2;
     private final static Integer GRADE_HEAD = 4;
     private final static Integer CLAZZ_HEAD = 3;
     private final static Integer STUDENT_HEAD = 1;
     private final static Integer SUBJECT_HEAD = 5;
     private final static Integer COURSE_HEAD = 6;
+    private final static Integer EXAM_HEAD = 70;
+    private final static Integer EXAM_ROOM_HEAD = 71;
 
+    public List<Integer> examRoomNoBatch(ExamPO examPO, Integer size){
+        List<Integer> noList = Lists.newArrayList();
+        ExamRoomNoSimpleDTO examRoomNoSimpleDTO = examRoomNo(examPO);
+        noList.add(examRoomNoSimpleDTO.getExamRoomNo());
+        for (int i = 0; i < size-1; i++){
+            examRoomNoSimpleDTO = examRoomNo(examPO, examRoomNoSimpleDTO.getCount());
+            noList.add(examRoomNoSimpleDTO.getExamRoomNo());
+        }
+
+        return noList;
+    }
+    //考试考室头+考室序号
+    public ExamRoomNoSimpleDTO examRoomNo(ExamPO examPO, Integer count){
+        String eNoStr = String.valueOf(examPO.getENo());
+        eNoStr = eNoStr.substring(3, eNoStr.length());
+        Integer examRoomNo = Integer.valueOf(EXAM_ROOM_HEAD + eNoStr + String.valueOf(++count));
+
+        return ExamRoomNoSimpleDTO.builder().examRoomNo(examRoomNo).count(count).build();
+    }
+    public ExamRoomNoSimpleDTO examRoomNo(ExamPO examPO){
+        String eNoStr = String.valueOf(examPO.getENo());
+        eNoStr = eNoStr.substring(3, eNoStr.length());
+
+        Example example = new Example(ExamRoomPO.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("deleted", false);
+        Integer count = examRoomMapper.selectCountByExample(example);
+
+        Integer examRoomNo = Integer.valueOf(EXAM_ROOM_HEAD + eNoStr + String.valueOf(count));
+
+        return ExamRoomNoSimpleDTO.builder().examRoomNo(examRoomNo).count(count).build();
+    }
+
+    //考试头+年级编号+考试序号（不占位）
+    public Integer examNo(ExamPO examPO){
+        String gradeId = examPO.getGradeId();
+        if (StringUtils.isBlank(gradeId)){
+            throw new MyMissingFieldException("缺少举行该考试的年级Id");
+        }
+        GradePO gradePO = gradeMapper.selectByPrimaryKey(gradeId);
+        String gradeNoStr = String.valueOf(gradePO.getGNo());
+        gradeNoStr = gradeNoStr.substring(gradeNoStr.length()-2, gradeNoStr.length());
+
+        Example example = new Example(ExamPO.class);
+        Example.Criteria criteria = example.createCriteria();
+
+        criteria.andEqualTo("deleted", false);
+        Integer count = examMapper.selectCountByExample(example);
+
+        return Integer.valueOf(EXAM_HEAD + gradeNoStr + String.valueOf(count));
+    }
 
     //年级编号 gNo = 入学年份后两位 + 初中(0)/高中(1) + 该年级序号(第几个创建的年级序号就是几,共2位，不足10的时候0占领位)；
     //年级头+入学年份后两位+初中(0)/高中(1)+序号(2位) => 共6位数
@@ -139,6 +214,16 @@ public class NoGenerator {
         subCode = subCode.substring(subCode.length()-3, subCode.length());
         clazzCode = clazzCode.substring(clazzCode.length()-2, clazzCode.length());
         return Integer.parseInt(COURSE_HEAD + subCode + clazzCode);
+    }
+
+    //task编号
+    public Integer taskNo(){
+        Example example = new Example(TaskPO.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("deleted", false);
+
+        Integer count = taskMapper.selectCountByExample(example);
+        return ++count;
     }
 
     /**

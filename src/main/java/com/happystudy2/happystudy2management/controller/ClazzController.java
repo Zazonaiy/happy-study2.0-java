@@ -10,6 +10,7 @@ import com.happystudy2.happystudy2management.core.domain.vo.ResultData;
 import com.happystudy2.happystudy2management.core.service.ObjFormatter;
 import com.happystudy2.happystudy2management.core.service.TypeMapper;
 import com.happystudy2.happystudy2management.domain.dto.ClazzEditDTO;
+import com.happystudy2.happystudy2management.domain.po.clazz.view.ClazzInfoViewPO;
 import com.happystudy2.happystudy2management.domain.vo.*;
 import com.happystudy2.happystudy2management.factory.ResultDataFactory;
 import com.happystudy2.happystudy2management.service.ClazzService;
@@ -136,6 +137,14 @@ public class ClazzController {
             factory.addData(TypeVO.builder().typeCode(clazzTypeEnum.getCode()).typeDescription(ClazzTypeEnum.descriptionOf(clazzTypeEnum.getCode())).build());
         }
 
+        return factory.success();
+    }
+
+    @GetMapping("list/{gradeId}")
+    @ResponseBody
+    public ResultData<ClazzVO> listClazzByGradeId(@PathVariable("gradeId") String gradeId){
+        List<ClazzVO> clazzVOList = clazzService.listByGrade(gradeId);
+        ResultDataFactory factory = new ResultDataFactory(clazzVOList);
         return factory.success();
     }
 }

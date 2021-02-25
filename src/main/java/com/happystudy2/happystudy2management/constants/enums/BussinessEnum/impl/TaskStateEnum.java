@@ -1,7 +1,6 @@
 package com.happystudy2.happystudy2management.constants.enums.BussinessEnum.impl;
 
 import com.happystudy2.happystudy2management.constants.enums.BussinessEnum.BaseBussinessEnum;
-import com.happystudy2.happystudy2management.service.impl.TaskService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

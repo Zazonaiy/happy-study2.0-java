@@ -1,5 +1,7 @@
 package com.happystudy2.happystudy2management.loginCenter;
 
+import com.happystudy2.happystudy2management.dao.user.UserMapper;
+import com.happystudy2.happystudy2management.domain.po.user.UserPO;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -12,6 +14,7 @@ import org.apache.shiro.util.JdbcUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import javax.naming.ConfigurationException;
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -28,10 +31,13 @@ import org.apache.shiro.realm.AuthorizingRealm;
 /**
  * 账号密码角色 数据源
  */
+@Deprecated
 public class UsernameRealm extends AuthorizingRealm {
+    @Resource
+    private UserMapper userMapper;
     protected static final String DEFAULT_AUTHENTICATION_QUERY = "select password from users where username = ?";
     protected static final String DEFALUT_SALTED_AUTHENTICATION_QUERY = "select password, password_salt from users where username = ?";
-    protected static final String DEFAULT_USER_ROLES_QUERY = "select role_name from from user_roles where username = ?";
+    protected static final String DEFAULT_USER_ROLES_QUERY = "select role_name from user_roles where username = ?";
     protected static final String DEFAULT_PERMISSIONS_QUERY = "select permission from roles_permissions where role_name = ?";
     private String authenticationQuery = UsernameRealm.DEFAULT_AUTHENTICATION_QUERY;
     private String saltedAuthenticationQuery = UsernameRealm.DEFALUT_SALTED_AUTHENTICATION_QUERY;

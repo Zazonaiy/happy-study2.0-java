@@ -16,7 +16,10 @@ import java.util.List;
 public class ResultData <T extends BaseVO> {
     private List<T> resData;
 
+    private List<Object> extData;
+
     private Integer state;
 
     private String description;
+
 }

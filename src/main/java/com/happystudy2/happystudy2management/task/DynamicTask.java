@@ -4,7 +4,7 @@ import com.happystudy2.happystudy2management.constants.enums.BussinessEnum.impl.
 import com.happystudy2.happystudy2management.core.domain.vo.ScheduledFutureVO;
 import com.happystudy2.happystudy2management.core.service.TypeMapper;
 import com.happystudy2.happystudy2management.core.task.TaskRunnable;
-import com.happystudy2.happystudy2management.domain.po.TaskPO;
+import com.happystudy2.happystudy2management.domain.po.task.TaskPO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,9 +12,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 @Component
@@ -24,7 +23,9 @@ public class DynamicTask {
     @Autowired
     private TypeMapper typeMapper;
     //private Map<String, ScheduledFuture<?>> futureMap = new HashMap<>();
-    private Map<String, ScheduledFutureVO> futureEntityMap = new HashMap<>();
+    private Map<String, ScheduledFutureVO> futureEntityMap = new ConcurrentHashMap<>();
+    private Map<String, ScheduledFutureVO> stopTaskMap = new ConcurrentHashMap<>();
+
 
     @Bean
     public ThreadPoolTaskScheduler threadPoolTaskScheduler (){

@@ -237,7 +237,7 @@ public class StudentController {
         TITLE_MAP.put("班级号", "clazzNo");
         TITLE_MAP.put("父亲姓名", "fatherName");
         TITLE_MAP.put("父亲电话号码", "fatherPhone");
-        TITLE_MAP.put("母亲电姓名", "motherName");
+        TITLE_MAP.put("母亲姓名", "motherName");
         TITLE_MAP.put("母亲电话号码", "motherPhone");
         TITLE_MAP.put("紧急联系人姓名", "emContactName");
         TITLE_MAP.put("紧急联系人电话号码", "emContactPhone");

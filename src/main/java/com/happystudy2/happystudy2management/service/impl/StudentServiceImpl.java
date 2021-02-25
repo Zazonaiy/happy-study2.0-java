@@ -7,14 +7,14 @@ import com.happystudy2.happystudy2management.constants.enums.BussinessEnum.impl.
 import com.happystudy2.happystudy2management.core.domain.dto.ResultCop;
 import com.happystudy2.happystudy2management.core.domain.vo.MetaData;
 import com.happystudy2.happystudy2management.core.service.NoGenerator;
-import com.happystudy2.happystudy2management.dao.ClazzMapper;
-import com.happystudy2.happystudy2management.dao.StudentInfoViewMapper;
-import com.happystudy2.happystudy2management.dao.StudentMapper;
+import com.happystudy2.happystudy2management.dao.clazz.ClazzMapper;
+import com.happystudy2.happystudy2management.dao.student.StudentInfoViewMapper;
+import com.happystudy2.happystudy2management.dao.student.StudentMapper;
 import com.happystudy2.happystudy2management.domain.dto.StudentEditDTO;
 import com.happystudy2.happystudy2management.domain.dto.StudentImportDTO;
-import com.happystudy2.happystudy2management.domain.po.ClazzPO;
-import com.happystudy2.happystudy2management.domain.po.StudentPO;
-import com.happystudy2.happystudy2management.domain.po.view.StudentInfoViewPO;
+import com.happystudy2.happystudy2management.domain.po.clazz.ClazzPO;
+import com.happystudy2.happystudy2management.domain.po.student.StudentPO;
+import com.happystudy2.happystudy2management.domain.po.student.view.StudentInfoViewPO;
 import com.happystudy2.happystudy2management.domain.vo.ListResultVO;
 import com.happystudy2.happystudy2management.domain.vo.StudentVO;
 import com.happystudy2.happystudy2management.service.StudentService;
@@ -25,11 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Condition;
 import tk.mybatis.mapper.entity.Example;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -249,5 +246,20 @@ public class StudentServiceImpl implements StudentService {
         res.setDescription("/r/n success: "+successCount+", /r/n invalid: "+notExistCount);
         res.setWarnTag(warnTag);
         return res;
+    }
+
+    @Override
+    public StudentPO queryByNo(Integer sNo){
+        if (Objects.isNull(sNo)){
+            return null;
+        }
+
+        Example example = new Example(StudentPO.class);
+        Example.Criteria criteria = example.createCriteria();
+
+        criteria.andEqualTo("deleted", false);
+        criteria.andEqualTo("sNo", sNo);
+
+        return studentMapper.selectOneByExample(example);
     }
 }
