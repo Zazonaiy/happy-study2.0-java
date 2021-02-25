@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="${ctxPath}/css/man.css">
 
-<div id="course-man" class="container-fluid man-container">
+<div id="scoreBaseInfo" class="container-fluid man-container">
     <!-- 表头按钮 -->
     <div class="row tb-head-btn-group">
         <div class="input-pane col-3">
@@ -9,18 +9,18 @@
         </div>
         <div class="row col-3">
             <div class="col" style="padding-left: 8px; padding-right: 4px;">
-                <form class="layui-form layui-inline" style="width: 80%;">
-                    <select name="gradeType" lay-search="" id="gradeTypeSelect" lay-filter="gradeTypeSelect">
-                        <option value="">初中/高中</option>
-                        <option v-for="type in gradeTypeArray" :value="type.typeCode">{{type.typeDescription}}</option>
+                <form class="layui-form layui-inline">
+                    <select name="scoreLevel" lay-search="" id="scoreLevelSelect" lay-filter="scoreLevelSelect">
+                        <option value="">按分段筛选</option>
+                        <option v-for="type in scoreTypeArray" :value="type.typeCode">{{type.typeDescription}}</option>
                     </select>
                 </form>
             </div>
-            <div class="col" style="padding-left: 4px; padding-right: 8px">
+            <div class="col" style="padding-left: 4px; padding-right: 8px;">
                 <form class="layui-form layui-inline">
-                    <select name="subjectTypeSelect" lay-search="" id="subjectTypeSelect" lay-filter="subjectTypeSelect">
-                        <option value="">科目类型</option>
-                        <option v-for="type in subjectTypeArray" :value="type.typeCode">{{type.typeDescription}}</option>
+                    <select name="clazz" lay-search="" id="clazzSelect" lay-filter="clazzSelect">
+                        <option value="">按班级筛选</option>
+                        <option v-for="simple in clazzArray" :value="simple.id">{{simple.name}}</option>
                     </select>
                 </form>
             </div>
@@ -50,7 +50,6 @@
                     <col width="150">
                     <col width="150">
                     <col width="150">
-                    <col width="150">
                     <col>
                     <col width="150">
                 </colgroup>
@@ -59,59 +58,54 @@
                     <th class="myTbhead" id="headCheck">
                         <input type="checkbox" name="" lay-skin="primary" id="checkAll" style="text-align: center;" class="layui-form-checkbox"
                                v-model="checkBox.isCheckAll" @change="checkAll()"></th>
-                    <th class="myTbhead">课程编号
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('coNo', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('coNo', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">课程名称
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('name', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('name', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">班级
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('clazzName', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('clazzName', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">年级
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('gradeName', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('gradeName', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">授课教师
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('teacherName', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('teacherName', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">所属科目
+                    <th class="myTbhead">考试科目
                         <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('subjectName', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
                         <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('subjectName', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">科目类型
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('subjectType', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('subjectType', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">参课人数
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('studentCount', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('studentCount', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">学生名称
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('studentName', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('studentName', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">分数
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('score', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('score', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">所在班级
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('clazzName', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('clazzName', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">成绩情况 <!-- TODO -->
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" ><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" ><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">排名<!-- TODO -->
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" ><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" ><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">所属考试</th>
                     <th class="myTbhead">备注</th>
                     <th class="myTbhead">编辑</th>
                 </tr>
                 </thead>
-                <tbody v-for="course in baseInfo.infoArray">
+                <tbody v-for="score in baseInfo.infoArray">
                 <tr>
                     <td><input type="checkbox" name="" lay-skin="primary" class="layui-form-checkbox"
-                               v-model="checkBox.checkedValues" :value="course.id"></td>
-                    <td><a href="#" @click="openBTModal(course)">{{course.coNo}}</a></td>
-                    <td>{{course.courseName}}</td>
-                    <td>{{course.clazzName}}</td>
-                    <td>{{course.gradeName}}</td>
-                    <td>{{course.teacherName}}</td>
-                    <td>{{course.subjectName}}</td>
-                    <td>{{course.subjectType.typeDescription}}</td>
-                    <td>{{course.studentCount}}</td>
-                    <td v-if="course.remark!=null&&course.remark!=''">{{course.remark}}</td>
-                    <td v-if="course.remark==null||course.remark==''">暂无</td>
+                               v-model="checkBox.checkedValues" :value="score.id"></td>
+                    <td>{{score.subjectName}}</td>
+                    <td>{{score.studentName}}</td>
+                    <td><a href="#" @click="openBTModal(score)">{{score.score}}</a></td>
+                    <td>{{score.clazzName}}</td>
+                    <td>{{score.scoreType.typeDescription}}</td>
+                    <td>TODO</td>
+                    <td>{{score.examName}}</td>
+                    <td v-if="score.remark!=null&&score.remark!=''">{{score.remark}}</td>
+                    <td v-if="score.remark==null||score.remark==''">暂无</td>
                     <td>
                         <button class="layui-btn layui-btn-sm" style="float: left;margin-left: 5%;"
-                                @click="openEditModal('update', course)">修改</button>
+                                @click="openEditModal('update', score)">修改</button>
                         <button class="layui-btn layui-btn-sm layui-btn-danger" style="float: right;margin-right: 5%;"
-                                @click="deleteConfirm(course)">删除</button>
+                                @click="deleteConfirm(score)">删除</button>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
+
     <div id="navPane" class="row" style="width: 100%;">
         <div class="col d-flex justify-content-center">
             <nav aria-label="Page navigation" id="nav" class="d-flex align-items-center">
@@ -175,18 +169,16 @@
             Launch demo modal
         </button>
     </div>
-
 </div>
 
 <script>
-    var courseVue = new Vue({
-        el : "#course-man",
+    var scoreBaseInfoVue = new Vue({
+        el : "#scoreBaseInfo",
         data : {
+            examId : scoreVue.current.examId,
+            examName : scoreVue.current.examName,
             baseInfo : {
                 infoArray : null,
-                select : "",
-                pageBeforeOmit : false,
-                pageAfterOmit: true,
             },
             editModal : {
                 show : false,
@@ -208,16 +200,18 @@
                 orderBy : "",
                 orderWay : "asc",
                 filter : {
-                    gradeType : "",
-                    subjectType : "",
+                    scoreType : "",
+                    clazzId : "",
                     keyword : "",
                 },
                 ext : [],
                 isFirstTime : true,
             },
-            gradeTypeArray : [],
-            subjectTypeArray : [],
-
+            detailMsg : {
+                score : null,
+            },
+            scoreTypeArray : [],
+            clazzArray : [],
         },
         methods : {
             orderIt : function(orderBy, orderWay){
@@ -225,10 +219,10 @@
                 this.pageParam.orderWay = orderWay;
                 this.listForm();
             },
-            selectIt : function(){
+            selectIt : function () {
                 var keyword = this.pageParam.filter.keyword;
-                var gradeType = this.pageParam.filter.gradeType;
-                var subjectType = this.pageParam.filter.subjectType;
+                var scoreType = this.pageParam.filter.scoreType;
+                var clazzId = this.pageParam.filter.clazzId;
 
                 if (keyword !=undefined && keyword != null && keyword != ""){
                     this.pageParam.ext[0] = keyword;
@@ -237,22 +231,64 @@
 
                 this.listForm();
             },
-            openBTModal : function(course){
-                var url = "${ctxPath}/happy-study/courseMan/showCourseMsg"
+            openBTModal : function(score){
+                //this.detailMsg.score = JSON.parse(JSON.stringify(score));
+                var url = "${ctxPath}/happy-study/scoreMan/showScoreMsg"
                 var loading = vue.loadingFont;
-                $("#common-modal-head").text(course.courseName);
+                $("#common-modal-head").text(score.studentName+": "+score.subjectName);
                 $("#common-modal-body").empty();
                 $("#modalTrigger").trigger("click");
                 $("#common-modal-body").html(loading);
-                $("#common-modal-body").load(url, {course}, function () {
-                    modalVue.course = course;
+                debugger;
+                $("#common-modal-body").load(url, {}, function () {
+                    //modalVue.score = score;
+                    loadModalData(score);
                 });
             },
             doExcelImport : function(){
-                excelImport($("#import_form"), $("#excel"),
-                    "post",
-                    "${ctxPath}/happy-study/courseMan/import",
-                    layer);
+                if ($("#excel").val()==""){
+                    return ;
+                }
+                var formData = new FormData($("#import_form")[0]);
+                formData.append("file", $("#excel")[0].files);
+
+                $.ajax({
+                    type : "post",
+                    url : "${ctxPath}/happy-study/scoreMan/import",
+                    processData : false,
+                    contentType : false,
+                    data : formData,
+                    success : response=>{
+                        if (response.state == 2){
+                            layer.msg(response.description, {
+                                icon : 3
+                            });
+
+                        }else if (response.state == 1){
+                            scoreBaseInfoVue.listForm();
+                            layer.msg(response.description, {
+                                end : function () {
+                                },
+                                icon : 1
+                            });
+
+                        }else{
+                            layer.msg(response.description, {
+                                icon : 7
+                            })
+
+                        }
+                        $("#excel").val("");
+                        return ;
+                    },
+                    error : function (err) {
+                        layer.msg(err, {
+                            icon : 7
+                        })
+                        $("#excel").val("");
+                        return ;
+                    }
+                })
             },
             excelImport : function(){
                 $("#excel").trigger("click");
@@ -287,7 +323,7 @@
             deleteBatch : function(){
                 checkedValues = this.checkBox.checkedValues;
                 if (checkedValues == undefined || checkedValues == null || checkedValues.length == 0){
-                    layer.msg("还未勾选删除的年级", {
+                    layer.msg("还未勾选删除的成绩单", {
                         icon : 3
                     });
                     return ;
@@ -297,12 +333,12 @@
                 for (var i = 0; i < checkedValues.length; i++){
                     ids += checkedValues[i]+"-";
                 }
-                var msg = "确认要删除的年级 "+checkedValues.length+" 个 吗？"
+                var msg = "确认要删除的成绩单 "+checkedValues.length+" 个 吗？"
                 layer.confirm(msg, {
                     btn:['确定', '取消']
                 }, function (index) {
                     layer.close(index);
-                    courseVue.deleteSome(ids);
+                    scoreBaseInfoVue.deleteSome(ids);
                 }, function () {
                     alert("2");
                 })
@@ -321,22 +357,22 @@
                     }
                 }
             },
-            deleteSome : function(courseIdList){
+            deleteSome : function(scoreIdList){
                 $.ajax({
-                    url : "${ctxPath}/happy-study/courseMan/doEdit/baseinfo/delete",
+                    url : "${ctxPath}/happy-study/scoreMan/doEdit/baseinfo/delete",
                     type : "delete",
-                    data : {courseIds : courseIdList},
+                    data : {scoreIds : scoreIdList},
                     async : false,
                     success : (response)=>{
                         if (response.state == 1){
-                            courseVue.listForm();
+                            scoreBaseInfoVue.listForm();
                             layer.msg(response.description, {
                                 end : function () {
                                 },
                                 icon : 1
                             });
                         }else if (response.state == 2) {
-                            courseVue.listForm();
+                            scoreBaseInfoVue.listForm();
                             layer.msg(response.description, {
                                 icon : 3
                             });
@@ -353,26 +389,25 @@
                     }
                 })
             },
-            deleteConfirm : function(course){
-                var msg = "确认要删除年级\r\n 编号:"+course.coNo+"\r\n 名称:"+course.courseName+"\r\n 吗？"
+            deleteConfirm : function(score){
+                var msg = "确认要删除成绩单\r\n 考试:"+score.examName+"\r\n 科目:"+score.examSubjectName+"\r\n 学生:"+score.studentName+"吗？"
                 layer.confirm(msg, {
                     btn:['确定', '取消']
                 }, function (index) {
                     layer.close(index);
-                    courseVue.deleteSome(course.id);
+                    scoreBaseInfoVue.deleteSome(score.id);
                 }, function () {
                     //alert("2");
                 })
-
             },
-            openEditModal : function(actionType, course){
+            openEditModal : function(actionType, score){
                 var modalTitle = "";
                 if (actionType == 'add'){
                     this.editModal.actionType = actionType;
-                    modalTitle = "添加课程";
+                    modalTitle = "添加成绩单";
                 }else if (actionType == 'update'){
                     this.editModal.actionType = actionType
-                    modalTitle = "更新年课程基本信息"
+                    modalTitle = "修改成绩"
                 }else{
                     return ;
                 }
@@ -380,29 +415,29 @@
                     type: 2,
                     title: modalTitle,
                     //content: $('#stuEditModal'),
-                    content: ["${ctxPath}/happy-study/courseMan/editform/baseinfo/"+actionType, "no"], //获取html 不出现滚动条
+                    content: ["${ctxPath}/happy-study/scoreMan/editform/baseinfo/"+actionType, "no"], //获取html 不出现滚动条
                     area: ['700px', '500px'],
                     success: function (layero, index) {
                         //弹出成功后的回调
-                        courseVue.editModal.show = true;
+                        scoreBaseInfoVue.editModal.show = true;
 
-                        //if (grade!=null){
-                        //    if (grade.gradeType=="初中"){
-                        //        grade.gradeType = 1;
-                        //    }else{
-                        //        grade.gradeType = 2;
-                        //    }
-                        //}
+                        if (score!=null){
+
+                        }
                         //向子模块传递，子模块的vue写在这里面的，如果这类不掉用，子模块的vue无法加载
                         //！！！！！！注意！！！！！！
                         var iframe = window['layui-layer-iframe' + index];
-                        //debugger
-                        iframe.child(course);
+                        var exam = {
+                            examId : scoreBaseInfoVue.examId,
+                            examName : scoreBaseInfoVue.examName,
+                        }
+                        debugger
+                        iframe.child(JSON.parse(JSON.stringify(exam)), score);
                         //debugger
                     },
                     end : function () {
                         //弹框销毁后刷新表格
-                        courseVue.listForm();
+                        scoreBaseInfoVue.listForm();
                     }
                 })
             },
@@ -415,6 +450,7 @@
                 this.refreshCheckBox();
 
                 var pageParam = this.pageParam;
+                var examId = this.examId;
 
                 var paginationParam = {
                     page : pageParam.currentPage,
@@ -424,15 +460,15 @@
                     totalCount : 0
                 }
                 var filter = {
-                    gradeType : pageParam.filter.gradeType,
-                    subjectType : pageParam.filter.subjectType,
+                    scoreType : pageParam.filter.scoreType,
+                    clazzId : pageParam.filter.clazzId,
                 }
 
                 var ext = pageParam.ext;
-
+                debugger
                 $.ajax({
                     type : "get",
-                    url : "${ctxPath}/happy-study/courseMan/list",
+                    url : "${ctxPath}/happy-study/scoreMan/list/"+examId,
                     async: false,
                     data : {paginationParam : paginationParam,
                         filter : filter,
@@ -455,56 +491,71 @@
                 })
                 //debugger
             },
-            listGradeType : function () {
-                $.get("${ctxPath}/happy-study/studentMan/list/gradeType", {}, response=>{
-                    var state = response.state;
-                    if (state==0){
-                        console.log(response.description);
-                        return ;
+            listScoreType : function () {
+                //TODO:
+                $.ajax({
+                    url : "${ctxPath}/happy-study/scoreMan/list/scoreType",
+                    type : "get",
+                    data : {},
+                    async : false,
+                    success : (response)=>{
+                        var state = response.state;
+                        if (state==0){
+                            console.log(response.description);
+                            return ;
+                        }
+                        this.scoreTypeArray = response.resData;
+                        debugger;
                     }
-
-                    this.gradeTypeArray = response.resData;
-                    //debugger
                 })
             },
-            listSubjectType : function(){
-                $.get("${ctxPath}/happy-study/subjectMan/list/subjectType", {}, response=>{
-                    var state = response.state;
-                    if (state==0){
-                        console.log(response.description);
-                        return ;
+            listClazzArray : function () {
+                //TODO:
+                var examId = this.examId;
+                debugger;
+                if (examId==undefined||examId==null||examId==""){
+                    layer.msg("考试对象获取失败");
+                }
+                $.ajax({
+                    url : "${ctxPath}/happy-study/exam/list/clazz/"+examId,
+                    type : "get",
+                    data : {},
+                    async : false,
+                    success : (response)=>{
+                        var state = response.state;
+                        if (state==0){
+                            console.log(response.description);
+                            return ;
+                        }
+                        this.clazzArray = response.resData;
+                        debugger;
                     }
+                })
+            },
+            initLayUI : function () {
+                layui.use('form', function () {
+                    var form = layui.form;
 
-                    this.subjectTypeArray = response.resData;
-                    //debugger
+                    form.on("select(scoreTypeSelect)", function(data){
+                        scoreBaseInfoVue.pageParam.filter.scoreType = data.value;
+                        scoreBaseInfoVue.listForm();
+                    })
+                    form.on("select(clazzSelect)", function(data){
+                        scoreBaseInfoVue.pageParam.filter.clazzId = data.value;
+                        scoreBaseInfoVue.listForm();
+                    })
+
+                    form.render();
                 })
             }
-
         },
         mounted : function () {
             this.listForm();
-
-            this.listGradeType();
-            this.listSubjectType();
+            this.listScoreType();
+            this.listClazzArray();
+            this.$nextTick(function () {
+                this.initLayUI();
+            })
         }
     })
-
-    layui.use('form', function () {
-        var form = layui.form;
-
-        form.on("select(gradeTypeSelect)", function(data){
-            subjectVue.pageParam.filter.gradeType = data.value;
-            subjectVue.listForm();
-        })
-        form.on("select(subjectTypeSelect)", function(data){
-            subjectVue.pageParam.filter.subjectType = data.value;
-            subjectVue.listForm();
-        })
-
-
-        form.render();
-
-    })
-
-
 </script>

@@ -25,7 +25,8 @@
     <link rel="stylesheet" href="${ctxPath}/font/bootstrap-icons-1.2.2/font/bootstrap-icons.css">
     <!-- anime -->
     <script type="text/javascript" src="${ctxPath}/frame/anime/anime.min.js"></script>
-
+    <!-- mySocket -->
+    <!--<script type="text/javascript" src="${ctxPath}/js/socket/socket.js" /> -->
 </head>
 <style>
     #outter .nonUnderline{
@@ -148,6 +149,15 @@
                 },
                 //preFirst : "",
                 //preSecond : ""
+            },
+            mySocket : null,
+            socketData : {
+                req : {
+
+                },
+                res : {
+                    message : "",
+                }
             }
         },
         methods : {
@@ -198,6 +208,7 @@
                     $(location).attr("href", url);
                     return;
                 }
+
                 var loading = vue.loadingFont;
                 console.log(loading);
                 console.log(url);
@@ -216,6 +227,62 @@
 
 
             },
+            initMySocket : function () {
+                //var mySocket = new MySocket("ws://localhost:33268/happy-study/webSocket");
+                //this.mySocket = mySocket;
+                if ('WebSocket' in window){
+                    this.mySocket = new WebSocket("ws://localhost:33268/happy-study/webSocket");
+                }else{
+                    alert("Not support websocket");
+                }
+
+                var webSocket = this.mySocket;
+                //连接发生错误的回调方法
+                this.mySocket.onerror = ()=>{
+                    consoleSocketState("error");
+                };
+                //连接成功建立的回调方法
+                this.mySocket.onopen = (event)=>{
+                    consoleSocketState("open");
+                }
+                //接收到消息的回调方法
+                this.mySocket.onmessage = (event)=>{
+                    //setMessageInnerHTML(event.data);
+                    this.socketData.res.message = event.data;
+                    consoleSocketState(this.socketData.res.message)
+                }
+                //连接关闭的回调方法
+                this.mySocket.onclose = ()=>{
+                    consoleSocketState("close");
+                }
+                window.onbeforeunload = ()=> {
+                    this.mySocket.close();
+                }
+
+                //将消息显示在网页上
+                function consoleSocketState(data){
+                    console.log(data);
+                }
+//发送消息
+                function send(){
+                    var message = vue.socketData.req.message;
+                    websocket.send(message);
+                }
+            },
+            initArrayMethod : function () {
+                Array.prototype.indexOf = function (val) {
+                    for (var i = 0; i < this.length; i++){
+                        if (this[i]==val) return i;
+                    }
+                    return -1;
+                }
+                Array.prototype.remove = function (val) {
+                    var index  = this.indexOf(val);
+                    if (index > -1){
+                        this.splice(index, 1);
+                    }
+                }
+            }
         },
         mounted : function(){
             layui.use('element', function(){
@@ -223,6 +290,9 @@
 
             });
             this.getMenu();
+            this.initMySocket();
+            this.initArrayMethod();
+
 
             setInterval(()=>{show()}, 1000);
         }

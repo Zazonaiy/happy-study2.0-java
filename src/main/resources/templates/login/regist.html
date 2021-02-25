@@ -1,0 +1,30 @@
+
+<div class="inner" id="registPane">
+    <h1 style="color: #fff;margin-bottom: 15px" id="title">HappyStudy2.0</h1>
+    <h2>注册用户</h2>
+    <label style="color: #fff">暂未开放自由用户注册，请联系管理员进行注册</label>
+    <a href="javascript:void(0)" class="lighting" @click="goBack()">
+        back
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </a>
+</div>
+
+<script>
+    var registVue = new Vue({
+        el : "#registPane",
+        data : {
+
+        },
+        methods : {
+            goBack : function () {
+                loginVue.loadingNode("${ctxPath}/login", ()=>{})
+            }
+        },
+        mounted : function () {
+
+        }
+    })
+</script>

@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="${ctxPath}/css/man.css">
 
-<div id="course-man" class="container-fluid man-container">
+<div id="exam-man" class="container-fluid man-container">
     <!-- 表头按钮 -->
     <div class="row tb-head-btn-group">
         <div class="input-pane col-3">
@@ -9,18 +9,20 @@
         </div>
         <div class="row col-3">
             <div class="col" style="padding-left: 8px; padding-right: 4px;">
-                <form class="layui-form layui-inline" style="width: 80%;">
-                    <select name="gradeType" lay-search="" id="gradeTypeSelect" lay-filter="gradeTypeSelect">
-                        <option value="">初中/高中</option>
-                        <option v-for="type in gradeTypeArray" :value="type.typeCode">{{type.typeDescription}}</option>
+                <form class="layui-form layui-inline">
+                    <select name="examType" lay-search="" id="examTypeSelect" lay-filter="examTypeSelect">
+                        <option value="">考试类型</option>
+                        <option v-for="type in examTypeArray" :value="type.typeCode">{{type.typeDescription}}</option>
+                        <!--<option v-for="type in gradeTypeArray" :value="type.typeCode">{{type.typeDescription}}</option>-->
                     </select>
                 </form>
             </div>
-            <div class="col" style="padding-left: 4px; padding-right: 8px">
+            <div class="col" style="padding-left: 4px; padding-right: 8px;">
                 <form class="layui-form layui-inline">
-                    <select name="subjectTypeSelect" lay-search="" id="subjectTypeSelect" lay-filter="subjectTypeSelect">
-                        <option value="">科目类型</option>
-                        <option v-for="type in subjectTypeArray" :value="type.typeCode">{{type.typeDescription}}</option>
+                    <select name="examState" lay-search="" id="examStateSelect" lay-filter="examStateSelect">
+                        <option value="">考试状态</option>
+                        <option v-for="type in examStateArray" :value="type.typeCode">{{type.typeDescription}}</option>
+                        <!--<option v-for="type in gradeTypeArray" :value="type.typeCode">{{type.typeDescription}}</option>-->
                     </select>
                 </form>
             </div>
@@ -32,7 +34,7 @@
         <div class="col">
             <div class=" row" style="float:right;">
                 <button class="layui-btn col" @click="excelImport()">导入</button>
-                <button class="layui-btn col" @click="openEditModal('add', null)">添加</button>
+                <button class="layui-btn col" @click="openEditModal('add', null)">创建</button>
                 <button class="layui-btn layui-btn-danger col" @click="deleteBatch()">删除</button>
             </div>
         </div>
@@ -50,7 +52,6 @@
                     <col width="150">
                     <col width="150">
                     <col width="150">
-                    <col width="150">
                     <col>
                     <col width="150">
                 </colgroup>
@@ -59,59 +60,60 @@
                     <th class="myTbhead" id="headCheck">
                         <input type="checkbox" name="" lay-skin="primary" id="checkAll" style="text-align: center;" class="layui-form-checkbox"
                                v-model="checkBox.isCheckAll" @change="checkAll()"></th>
-                    <th class="myTbhead">课程编号
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('coNo', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('coNo', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">课程名称
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('name', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('name', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">班级
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('clazzName', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('clazzName', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">考试编号
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('eNo', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('eNo', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">考试名称
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('examName', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('examName', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">考试类型
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('examType', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('examType', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">考试状态
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('examState', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('examState', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
                     <th class="myTbhead">年级
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('gradeName', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('gradeName', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">授课教师
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('teacherName', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('teacherName', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">所属科目
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('subjectName', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('subjectName', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">科目类型
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('subjectType', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
-                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('subjectType', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
-                    <th class="myTbhead">参课人数
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('gradeId', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('gradeId', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">学期
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('semesterId', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
+                        <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('semesterId', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">参考人数
                         <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('studentCount', 'asc')"><i class="bi bi-arrow-up-short" style="height: 100%;"></i></button>
                         <button class="btn btn-dark btn-sm" style="height: 40%;" @click="orderIt('studentCount', 'desc')"><i class="bi bi-arrow-down-short" style="height: 100%;"></i></button></th>
+                    <th class="myTbhead">开始日期</th>
+                    <th class="myTbhead">截止日期</th>
                     <th class="myTbhead">备注</th>
                     <th class="myTbhead">编辑</th>
                 </tr>
                 </thead>
-                <tbody v-for="course in baseInfo.infoArray">
+                <tbody v-for="exam in baseInfo.infoArray">
                 <tr>
                     <td><input type="checkbox" name="" lay-skin="primary" class="layui-form-checkbox"
-                               v-model="checkBox.checkedValues" :value="course.id"></td>
-                    <td><a href="#" @click="openBTModal(course)">{{course.coNo}}</a></td>
-                    <td>{{course.courseName}}</td>
-                    <td>{{course.clazzName}}</td>
-                    <td>{{course.gradeName}}</td>
-                    <td>{{course.teacherName}}</td>
-                    <td>{{course.subjectName}}</td>
-                    <td>{{course.subjectType.typeDescription}}</td>
-                    <td>{{course.studentCount}}</td>
-                    <td v-if="course.remark!=null&&course.remark!=''">{{course.remark}}</td>
-                    <td v-if="course.remark==null||course.remark==''">暂无</td>
+                               v-model="checkBox.checkedValues" :value="exam.id"></td>
+                    <td><a href="#" @click="openBTModal(exam)">{{exam.eno}}</a></td>
+                    <td>{{exam.examName}}</td>
+                    <td>{{exam.examType.typeDescription}}</td>
+                    <td>{{exam.examState.typeDescription}}</td>
+                    <td>{{exam.gradeName}}</td>
+                    <td>{{exam.semesterName}}</td>
+                    <td>{{exam.studentCount}}</td>
+                    <td>{{exam.beginDate}}</td>
+                    <td>{{exam.endDate}}</td>
+                    <td v-if="exam.remark!=null&&exam.remark!=''">{{exam.remark}}</td>
+                    <td v-if="exam.remark==null||exam.remark==''">暂无</td>
                     <td>
                         <button class="layui-btn layui-btn-sm" style="float: left;margin-left: 5%;"
-                                @click="openEditModal('update', course)">修改</button>
+                                @click="openEditModal('update', exam)">修改</button>
                         <button class="layui-btn layui-btn-sm layui-btn-danger" style="float: right;margin-right: 5%;"
-                                @click="deleteConfirm(course)">删除</button>
+                                @click="deleteConfirm(exam)">删除</button>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
+
     <div id="navPane" class="row" style="width: 100%;">
         <div class="col d-flex justify-content-center">
             <nav aria-label="Page navigation" id="nav" class="d-flex align-items-center">
@@ -162,33 +164,17 @@
         </div>
     </div>
 
-    <!-- excel导入 -->
-    <div v-show="false">
-        <form id="import_form"  enctype="multipart/form-data" method="post" action="" v-show="false">
-            <div style="margin-top: 5px" v-show="false">
-                选择Excel文件：<input type="file" id="excel" name="excel" @change="doExcelImport"
-                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" /></div>
-        </form>
-
-        <!-- Button trigger modal -->
-        <button type="button" id="modalTrigger" class="btn btn-primary" data-toggle="modal" data-target="#common-modal" hidden>
-            Launch demo modal
-        </button>
-    </div>
-
 </div>
 
 <script>
-    var courseVue = new Vue({
-        el : "#course-man",
+    var examVue = new Vue({
+        el : "#exam-man",
         data : {
             baseInfo : {
                 infoArray : null,
-                select : "",
-                pageBeforeOmit : false,
-                pageAfterOmit: true,
             },
             editModal : {
+                //考试一旦创建只能修改基本信息
                 show : false,
                 actionType : "add",
             },
@@ -208,27 +194,27 @@
                 orderBy : "",
                 orderWay : "asc",
                 filter : {
-                    gradeType : "",
-                    subjectType : "",
+                    examType : "",
+                    examState : "",
+                    examId : "",
                     keyword : "",
                 },
                 ext : [],
                 isFirstTime : true,
             },
-            gradeTypeArray : [],
-            subjectTypeArray : [],
-
+            examTypeArray : [],
+            examStateArray : [],
         },
         methods : {
-            orderIt : function(orderBy, orderWay){
+            orderIt : function (orderBy, orderWay) {
                 this.pageParam.orderBy = orderBy;
                 this.pageParam.orderWay = orderWay;
                 this.listForm();
             },
-            selectIt : function(){
+            selectIt : function () {
                 var keyword = this.pageParam.filter.keyword;
-                var gradeType = this.pageParam.filter.gradeType;
-                var subjectType = this.pageParam.filter.subjectType;
+                var examType = this.pageParam.filter.examType;
+                var examState = this.pageParam.filter.examState;
 
                 if (keyword !=undefined && keyword != null && keyword != ""){
                     this.pageParam.ext[0] = keyword;
@@ -237,25 +223,17 @@
 
                 this.listForm();
             },
-            openBTModal : function(course){
-                var url = "${ctxPath}/happy-study/courseMan/showCourseMsg"
+            openBTModal : function (exam) {
+                var url = "${ctxPath}/happy-study/exam/showExamMsg"
                 var loading = vue.loadingFont;
-                $("#common-modal-head").text(course.courseName);
+                $("#common-modal-head").text(exam.examName);
                 $("#common-modal-body").empty();
                 $("#modalTrigger").trigger("click");
                 $("#common-modal-body").html(loading);
-                $("#common-modal-body").load(url, {course}, function () {
-                    modalVue.course = course;
+                debugger;
+                $("#common-modal-body").load(url, {exam}, function () {
+                    modalVue.exam = exam;
                 });
-            },
-            doExcelImport : function(){
-                excelImport($("#import_form"), $("#excel"),
-                    "post",
-                    "${ctxPath}/happy-study/courseMan/import",
-                    layer);
-            },
-            excelImport : function(){
-                $("#excel").trigger("click");
             },
             setPageSize : function () {
                 if (this.pageParam.pageSize == $("#pageSizeBox").val()){
@@ -266,7 +244,7 @@
 
                 this.listForm();
             },
-            goToPage : function(page){
+            goToPage : function (page) {
                 if (page == 1){
 
                 }
@@ -284,10 +262,10 @@
                 this.pageParam.currentPage = page;
                 this.listForm();
             },
-            deleteBatch : function(){
+            deleteBatch : function () {
                 checkedValues = this.checkBox.checkedValues;
                 if (checkedValues == undefined || checkedValues == null || checkedValues.length == 0){
-                    layer.msg("还未勾选删除的年级", {
+                    layer.msg("还未勾选删除的考试", {
                         icon : 3
                     });
                     return ;
@@ -297,19 +275,19 @@
                 for (var i = 0; i < checkedValues.length; i++){
                     ids += checkedValues[i]+"-";
                 }
-                var msg = "确认要删除的年级 "+checkedValues.length+" 个 吗？"
+                var msg = "确认要删除的考试 "+checkedValues.length+" 个 吗？"
                 layer.confirm(msg, {
                     btn:['确定', '取消']
                 }, function (index) {
                     layer.close(index);
-                    courseVue.deleteSome(ids);
+                    examVue.deleteSome(ids);
                 }, function () {
                     alert("2");
                 })
             },
-            checkAll : function(){
+            checkAll : function () {
                 var array = this.baseInfo.infoArray;
-                //debugger
+
                 if (array != null){
                     if (this.checkBox.isCheckAll){
                         this.checkBox.checkedValues = [];
@@ -321,22 +299,22 @@
                     }
                 }
             },
-            deleteSome : function(courseIdList){
+            deleteSome : function(examIdList){
                 $.ajax({
-                    url : "${ctxPath}/happy-study/courseMan/doEdit/baseinfo/delete",
+                    url : "${ctxPath}/happy-study/exam/doEdit/baseinfo/delete",
                     type : "delete",
-                    data : {courseIds : courseIdList},
+                    data : {examIds : examIdList},
                     async : false,
                     success : (response)=>{
                         if (response.state == 1){
-                            courseVue.listForm();
+                            examVue.listForm();
                             layer.msg(response.description, {
                                 end : function () {
                                 },
                                 icon : 1
                             });
                         }else if (response.state == 2) {
-                            courseVue.listForm();
+                            examVue.listForm();
                             layer.msg(response.description, {
                                 icon : 3
                             });
@@ -353,26 +331,39 @@
                     }
                 })
             },
-            deleteConfirm : function(course){
-                var msg = "确认要删除年级\r\n 编号:"+course.coNo+"\r\n 名称:"+course.courseName+"\r\n 吗？"
+            deleteConfirm : function (exam) {
+                var msg = "确认要删除年级\r\n 编号:"+exam.eno+"\r\n 名称:"+exam.examName+"\r\n 吗？";
                 layer.confirm(msg, {
                     btn:['确定', '取消']
                 }, function (index) {
                     layer.close(index);
-                    courseVue.deleteSome(course.id);
+                    examVue.deleteSome(exam.id);
                 }, function () {
                     //alert("2");
                 })
-
             },
-            openEditModal : function(actionType, course){
+            openEditModal : function (actionType, exam) {
                 var modalTitle = "";
                 if (actionType == 'add'){
-                    this.editModal.actionType = actionType;
-                    modalTitle = "添加课程";
+                    var menuList = vue.menus;
+                    menuList.forEach(menu=>{
+                        if (menu.id=='examMan'){
+                            menu.subMenuList.forEach(subMenu=>{
+                                if (subMenu.id=='exm2'){
+                                    debugger
+                                    vue.navigateTo(subMenu);
+                                    debugger
+                                    return ;
+                                }
+                            })
+                            return ;
+                        }
+                    })
+                    return ;
+                    //var url = "${ctxPath}/happy-study/exam/regist";
                 }else if (actionType == 'update'){
                     this.editModal.actionType = actionType
-                    modalTitle = "更新年课程基本信息"
+                    modalTitle = "更新考试基本信息"
                 }else{
                     return ;
                 }
@@ -380,29 +371,25 @@
                     type: 2,
                     title: modalTitle,
                     //content: $('#stuEditModal'),
-                    content: ["${ctxPath}/happy-study/courseMan/editform/baseinfo/"+actionType, "no"], //获取html 不出现滚动条
+                    content: ["${ctxPath}/happy-study/exam/editform/baseinfo/"+actionType, "no"], //获取html 不出现滚动条
                     area: ['700px', '500px'],
                     success: function (layero, index) {
                         //弹出成功后的回调
-                        courseVue.editModal.show = true;
+                        examVue.editModal.show = true;
 
-                        //if (grade!=null){
-                        //    if (grade.gradeType=="初中"){
-                        //        grade.gradeType = 1;
-                        //    }else{
-                        //        grade.gradeType = 2;
-                        //    }
-                        //}
+                        if (exam!=null){
+
+                        }
                         //向子模块传递，子模块的vue写在这里面的，如果这类不掉用，子模块的vue无法加载
                         //！！！！！！注意！！！！！！
                         var iframe = window['layui-layer-iframe' + index];
-                        //debugger
-                        iframe.child(course);
+                        debugger
+                        iframe.child(exam);
                         //debugger
                     },
                     end : function () {
                         //弹框销毁后刷新表格
-                        courseVue.listForm();
+                        examVue.listForm();
                     }
                 })
             },
@@ -424,15 +411,15 @@
                     totalCount : 0
                 }
                 var filter = {
-                    gradeType : pageParam.filter.gradeType,
-                    subjectType : pageParam.filter.subjectType,
+                    examType : pageParam.filter.examType,
+                    examState : pageParam.filter.examState,
                 }
 
                 var ext = pageParam.ext;
 
                 $.ajax({
                     type : "get",
-                    url : "${ctxPath}/happy-study/courseMan/list",
+                    url : "${ctxPath}/happy-study/exam/list",
                     async: false,
                     data : {paginationParam : paginationParam,
                         filter : filter,
@@ -455,56 +442,68 @@
                 })
                 //debugger
             },
-            listGradeType : function () {
-                $.get("${ctxPath}/happy-study/studentMan/list/gradeType", {}, response=>{
-                    var state = response.state;
-                    if (state==0){
-                        console.log(response.description);
-                        return ;
+            listExamType : function () {
+                $.ajax({
+                    url : "${ctxPath}/happy-study/exam/list/examType",
+                    type : "get",
+                    data : {},
+                    async : false,
+                    success : (response)=>{
+                        var state = response.state;
+                        if (state==0){
+                            console.log(response.description);
+                            return ;
+                        }
+                        this.examTypeArray = response.resData;
+                        debugger;
                     }
-
-                    this.gradeTypeArray = response.resData;
-                    //debugger
                 })
-            },
-            listSubjectType : function(){
-                $.get("${ctxPath}/happy-study/subjectMan/list/subjectType", {}, response=>{
-                    var state = response.state;
-                    if (state==0){
-                        console.log(response.description);
-                        return ;
-                    }
 
-                    this.subjectTypeArray = response.resData;
-                    //debugger
+            },
+            listExamState : function () {
+                $.ajax({
+                    url : "${ctxPath}/happy-study/exam/list/examState",
+                    type : "get",
+                    data : {},
+                    async : false,
+                    success : (response)=>{
+                        var state = response.state;
+                        if (state==0){
+                            console.log(response.description);
+                            return ;
+                        }
+                        this.examStateArray = response.resData;
+                        debugger;
+                    }
+                })
+
+            },
+            initLayUI : function () {
+                layui.use('form', function () {
+                    var form = layui.form;
+
+                    form.on("select(examTypeSelect)", function(data){
+                        examVue.pageParam.filter.examType = data.value;
+                        examVue.listForm();
+                    })
+                    form.on("select(examStateSelect)", function(data){
+                        examVue.pageParam.filter.examState = data.value;
+                        examVue.listForm();
+                    })
+
+                    form.render();
                 })
             }
-
         },
         mounted : function () {
             this.listForm();
-
-            this.listGradeType();
-            this.listSubjectType();
+            this.listExamType();
+            this.listExamState();
+            this.$nextTick(function () {
+                this.initLayUI();
+            })
         }
-    })
-
-    layui.use('form', function () {
-        var form = layui.form;
-
-        form.on("select(gradeTypeSelect)", function(data){
-            subjectVue.pageParam.filter.gradeType = data.value;
-            subjectVue.listForm();
-        })
-        form.on("select(subjectTypeSelect)", function(data){
-            subjectVue.pageParam.filter.subjectType = data.value;
-            subjectVue.listForm();
-        })
-
-
-        form.render();
 
     })
-
 
 </script>

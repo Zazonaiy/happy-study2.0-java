@@ -1,0 +1,215 @@
+<!-- jQuery 3 -->
+<script type="text/javascript" src="${ctxPath}/frame/jquery/jquery-3.4.1.js"></script>
+<!-- vue -->
+<script type="text/javascript" src="${ctxPath}/frame/vue/vue.min.js"></script>
+<!-- layui -->
+<script src="${ctxPath}/frame/layui-v2.5.7/layui/layui.js"></script>
+<link rel="stylesheet" href="${ctxPath}/frame/layui-v2.5.7/layui/css/layui.css">
+
+<!-- 添加/修改成绩-->
+<div style="padding-top: 20px;">
+    <p id="actionTag" hidden>${action}</p>
+    <div id="scoreEditModal">
+        <form class="layui-form" action="" lay-filter="scoreEditForm">
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属考试</label>
+                <div class="layui-input-block" style="width: 45%;">
+                    <input type="text" name="examName" placeholder="所属考试" autocomplete="off"
+                           class="layui-input" :value="examName" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">考试科目</label>
+                    <div class="layui-input-inline">
+                        <select name="examSubject" id="examSubjectSelect" lay-filter="examSubjectSelect"
+                        >
+                            <option value="">选择考试科目</option>
+                            <option v-for="subject in examSubjectArray" :value="subject.id">{{subject.subjectName}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">改卷教师</label>
+                    <div class="layui-input-inline">
+                        <select name="marTeacher" id="marTeacherSelect" lay-filter="marTeacherSelect" disabled
+                        >
+                            <option value="">改卷教师</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">考生考号</label>
+                    <div class="layui-input-inline">
+                        <select name="subjectStudent" id="subjectStudentSelect" lay-filter="subjectStudentSelect" disabled
+                        >
+                            <option value="" v-if="examSubjectId==''">请先选择考试科目</option>
+                            <option value="" v-show="examSubjectId!=''">选择学生</option>
+                            <option v-for="subStudent in subjectStudentArray" :value="subStudent.id">{{subStudent.name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">分数成绩</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="score" placeholder="请输入分数成绩" autocomplete="off" required lay-verify="required|number"
+                               class="layui-input" v-model="score">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block" style="width: 500px;">
+                    <textarea name="remark" placeholder="请输入内容" class="layui-textarea" v-model="remark"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="scoreEdit" >立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function child(exam, score) {
+        var formVue = new Vue({
+            el : "#scoreEditModal",
+            data : {
+                form : null,
+                actionType : null,
+                subjectStudentArray : null,
+                examSubjectArray : null,
+                examId : "",
+                examName : "",
+                examSubjectId : "",
+                examSubjectName : "",
+                marTeacherId : "",
+                marTeacherName : "",
+                subjectStudentId : "",
+                studentName : "",
+                score : "",
+                remark : "",
+            },
+            methods : {
+                loadScoreData : function(){
+                    this.examId = exam.examId;
+                    this.examName = exam.examName;
+                    this.actionType = $("#actionTag").text();
+                    debugger;
+                },
+                getSubjectStudentArray : function(){
+                    var examId = this.examId;
+                    var examSubjectId = this.examSubjectId;
+                    $.ajax({
+                        type : "get",
+                        url : "${ctxPath}/happy-study/scoreMan/list/subjectStudent/"+examId,
+                        async : false,
+                        data : {examSubjectId : examSubjectId},
+                        success : response=>{
+                            this.subjectStudentArray = response.resData;
+                            debugger;
+
+                        }
+                    })
+                },
+                getExamSubjectArray : function(){
+                    //TODO:
+                    var examId = this.examId;
+                    $.ajax({
+                        type : "get",
+                        url : "${ctxPath}/happy-study/exam/list/subject/"+examId,
+                        async: false,
+                        success : response=>{
+                            console.log(response);
+                            var examSubjectArray = response.resData;
+                            this.examSubjectArray = examSubjectArray;
+                            debugger;
+                        }
+                    })
+                },
+                initLayUI : function () {
+                    layui.use(['form'], function () {
+                        var form = layui.form;
+
+                        formVue.form = form;
+                        form.on("select(subjectStudentSelect)", function (data) {
+                            formVue.subjectStudentId = data.value;
+                        });
+                        form.on("select(examSubjectSelect)", function (data) {
+                            formVue.examSubjectId = data.value;
+                            debugger;
+
+                            formVue.getSubjectStudentArray();
+                            if (formVue.examSubjectId==""){
+                                $("#subjectStudentSelect").attr("disabled", "disabled");
+                            }else{
+                                $("#subjectStudentSelect").removeAttr("disabled");
+                            }
+                            setTimeout(()=>{
+                                form.render();
+                            }, 50)
+                        })
+                        form.on("submit(scoreEditForm)", function (data) {
+                            var examId = formVue.examId;
+                            var examSubjectId = formVue.examSubjectId;
+                            var marTeacherId = formVue.marTeacherId;
+                            var subjectStudentId = formVue.subjectStudentId;
+                            var score = formVue.score;
+                            var remark = formVue.remark;
+
+                            var dataParam = {
+                                examSubjectId : examSubjectId,
+                                marTeacherId : marTeacherId,
+                                subjectStudentId : subjectStudentId,
+                                score : score,
+                                remark : remark
+                            }
+
+                            $.ajax({
+                                url : "${ctxPath}/happy-study/scoreMan/doEdit/baseinfo/"+formVue.actionType,
+                                type : "post",
+                                data : JSON.stringify(dataParam),
+                                contentType : "application/json;charset=utf-8",
+                                async : false,
+                                success : response=>{
+                                    layer.msg(response.description, {
+                                        end : function(){
+
+                                        }
+                                    })
+
+                                    setTimeout(()=>{
+                                        parent.layer.closeAll('iframe');
+                                    }, 1500)
+                                },
+                                error : ()=>{
+                                    layer.msg("请求失败", {icon : 5});
+                                }
+                            })
+
+                            return false;
+                        })
+
+                        form.render();
+
+                    })
+                }
+            },
+            mounted : function () {
+                this.loadScoreData();
+                this.getExamSubjectArray();
+                this.$nextTick(function () {
+                    this.initLayUI();
+
+                })
+            }
+        })
+    }
+</script>

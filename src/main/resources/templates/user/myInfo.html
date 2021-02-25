@@ -1,0 +1,164 @@
+<link rel="stylesheet" href="${ctxPath}/css/man.css">
+<style>
+    .outter{
+        box-shadow: 0 0 2px #03e9f4, 0 0 4px #03e9f4, 0 0 5px #03e9f4,
+        0 0 10px #03e9f4;
+    }
+    .top-inner {
+        height: 100%;
+        width: 100%;
+    }
+    .top-inner-item {
+        height: 100%;
+        padding: 8px 4px 8px 4px;
+
+
+    }
+    .msg-entity label{
+        line-height: 50px;
+    }
+    .msg-pane {
+        border-radius: 5px;
+        overflow-y: auto;
+        white-space: nowrap;
+    }
+    .msg-pane-hover :hover{
+        background: #95999c !important;
+        color: #fff !important;
+        font-weight: 600;
+        font-size: 18px;
+    }
+    .headimg-pane {
+        background: #0c5460 !important;
+    }
+    .headimg-pane img{
+        height: 100%;
+        width: 300px;
+    }
+</style>
+
+<div id="my-info" class="man-container">
+    <div style="width: 100%; height: 720px; margin-top: 20px; background: #0d6aad !important;" class="d-flex flex-column align-items-center">
+        <!-- top -->
+        <div style="width: 90%; height: 50%; padding-bottom: 3%; padding-top: 1%;">
+            <div class="shadow p-3 mb-5 bg-white rounded" style="height: 100%; width: 100%;">
+                <!-- top inner-->
+                <div class="d-flex flex-row top-inner" style="background: #0c5460; opacity: 0.8;">
+                    <div class="top-inner-item d-flex flex-column" style="width: 35%; padding-left: 8px;">
+                        <div style="width: 100%; height: 100%; background: #fff; border-radius: 5px;">
+                            <h3 style="text-align: center">我的权限</h3>
+                            <div class="msg-pane-hover" style="width: 100%; height: 80%; background: #fff; overflow-y: auto; white-space: nowrap;">
+                                <div class="d-flex msg-entity" style="height: 60px; width: 100%;">
+                                    <div style="padding-left: 8px;" class="d-flex justify-content-center">
+                                        <label>权限1</label>
+                                    </div>
+                                    <div class="flex-grow-1" style="text-align: right; padding-right: 9px;">
+                                        <label>描述</label>
+                                    </div>
+                                </div>
+                                <div class="d-flex msg-entity" style="height: 60px; width: 100%;">
+                                    <div style="padding-left: 8px;" class="d-flex justify-content-center">
+                                        <label>权限2</label>
+                                    </div>
+                                    <div class="flex-grow-1" style="text-align: right; padding-right: 9px;">
+                                        <label>描述</label>
+                                    </div>
+                                </div>
+                                <div class="d-flex msg-entity" style="height: 60px; width: 100%;">
+                                    <div style="padding-left: 8px;" class="d-flex justify-content-center">
+                                        <label>权限3</label>
+                                    </div>
+                                    <div class="flex-grow-1" style="text-align: right; padding-right: 9px;">
+                                        <label>描述</label>
+                                    </div>
+                                </div>
+                                <div class="d-flex msg-entity" style="height: 60px; width: 100%;">
+                                    <div style="padding-left: 8px;" class="d-flex justify-content-center">
+                                        <label>权限3</label>
+                                    </div>
+                                    <div class="flex-grow-1" style="text-align: right; padding-right: 9px;">
+                                        <label>描述</label>
+                                    </div>
+                                </div>
+                                <div class="d-flex msg-entity" style="height: 60px; width: 100%;">
+                                    <div style="padding-left: 8px;" class="d-flex justify-content-center">
+                                        <label>权限3</label>
+                                    </div>
+                                    <div class="flex-grow-1" style="text-align: right; padding-right: 9px;">
+                                        <label>描述</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="top-inner-item d-flex flex-column" style="width: 30%; ">
+                        <div style="width: 100%; height: 100%; background: #fff;" class="headimg-pane d-flex flex-column align-items-center">
+                            <img >
+                        </div>
+                    </div>
+                    <div class="top-inner-item d-flex flex-column" style="width: 35%; padding-right: 8px;">
+                        <div class="msg-pane msg-pane-hover" style="width: 100%; height: 100%; background: #fff;">
+                            <!-- msg -->
+                            <div class="d-flex msg-entity" style="height: 60px; width: 100%;">
+                                <div style="padding-left: 8px;" class="d-flex justify-content-center">
+                                    <label>账号类型</label>
+                                </div>
+                                <div class="flex-grow-1" style="text-align: right; padding-right: 9px;">
+                                    <label>学生账号</label>
+                                </div>
+                            </div>
+                            <div class="d-flex msg-entity" style="height: 60px; width: 100%;">
+                                <div style="padding-left: 8px;" class="d-flex justify-content-center">
+                                    <label>绑定手机号</label>
+                                </div>
+                                <div class="flex-grow-1" style="text-align: right; padding-right: 9px;">
+                                    <label>暂无</label>
+                                </div>
+                            </div>
+                            <div class="d-flex msg-entity" style="height: 60px; width: 100%;">
+                                <div style="padding-left: 8px;" class="d-flex justify-content-center">
+                                    <label>绑定微信号</label>
+                                </div>
+                                <div class="flex-grow-1" style="text-align: right; padding-right: 9px;">
+                                    <label>暂无</label>
+                                </div>
+                            </div>
+                            <div class="d-flex msg-entity" style="height: 60px; width: 100%;">
+                                <div style="padding-left: 8px;" class="d-flex justify-content-center">
+                                    <label>账号创建日期</label>
+                                </div>
+                                <div class="flex-grow-1" style="text-align: right; padding-right: 9px;">
+                                    <label>2021-2-25</label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- bottom -->
+        <div style="width: 90%; height: 47%;">
+            <div class="shadow-lg p-3 mb-5 bg-white rounded" style="height: 100%; width: 100%;">
+                <!-- top bottom-->
+                <div class="d-flex flex-row top-inner" style="background: #0c5460; opacity: 0.8;">
+                    <div class="top-inner-item d-flex flex-column" style="width: 50%; padding-left: 8px;">
+                        <div class="msg-pane msg-pane-hover" style="width: 100%; height: 100%; background: #fff;">
+
+                        </div>
+                    </div>
+                    <div class="top-inner-item d-flex flex-column" style="width: 50%; padding-right: 8px;">
+                        <div class="msg-pane msg-pane-hover" style="width: 100%; height: 100%; background: #fff;">
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

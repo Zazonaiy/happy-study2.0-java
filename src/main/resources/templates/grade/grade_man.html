@@ -119,7 +119,7 @@
                     </li>
 
                     <li class="page-item" v-for="i in pageParam.pageCount" v-bind:class="{'active' : i==pageParam.currentPage}"
-                    ><a class="page-link" href="#" @click="goToPage(i)">{{i}} <span class="sr-only" v-if="i==pageParam.currentPage">(current)</span></a></li>
+                        v-show="pageParam.currentPage-i<3&&i-pageParam.currentPage<3" ><a class="page-link" href="#" @click="goToPage(i)">{{i}} <span class="sr-only" v-if="i==pageParam.currentPage">(current)</span></a></li>
 
                     <li class="page-item disabled">
                         <a class="page-link" href="#" aria-disabled="true"

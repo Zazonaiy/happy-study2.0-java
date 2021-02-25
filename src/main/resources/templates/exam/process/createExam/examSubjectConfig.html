@@ -1,0 +1,437 @@
+<style>
+    .boxItem {
+        width: 100%;
+        height: 100%;
+    }
+    .layui-form-select dl {
+        max-height: 200px;
+    }
+
+</style>
+
+<div style="width: 100%; height: 100%;" class="d-flex flex-row" id="step-3">
+    <!-- left -->
+    <div class="boxItem layui-form layui-anim layui-anim-fadein" style="padding-right: 1%; max-height:100%; overflow-y: auto; overflow-x: hidden; white-space: nowrap;">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend>考试科目</legend>
+        </fieldset>
+        <div class="layui-form-item" style="padding-left: 15px;padding-right: 15px;">
+            <div id="test1" class="demo-transfer"></div>
+        </div>
+        <div class="layui-form-item" style="padding-left: 15px;padding-right: 15px;">
+            <div class="layui-btn-container">
+                <button hidden type="button" class="layui-btn" lay-demotransferactive="getData" id="getSubjectListBtn">获取右侧数据</button>
+                <button hidden type="button" class="layui-btn" lay-demotransferactive="reload">重载实例</button>
+                <button type="button" class="btn btn-outline-secondary">重置</button>
+                <button type="button" :class="{'btn btn-outline-info':switchBox.subjectConfirm, 'btn btn-outline-warning':!switchBox.subjectConfirm}" @click="loadSubjectList()">确认</button>
+                <div v-show="switchBox.subjectConfirm" class="layui-inline justify-content-center" style="height: 100%; margin-left: 10px; padding-top: 10px;"><i class="bi bi-check" style="font-size: 22px; color: #00c0ef;">已保存</i></div>
+                <div v-show="!switchBox.subjectConfirm" class="layui-inline justify-content-center" style="height: 100%; margin-left: 10px; padding-top: 10px;"><i class="bi bi-x-diamond" style="font-size: 22px; color: #e38d13;">编辑中</i></div>
+            </div>
+        </div>
+
+        <fieldset class="layui-elem-field layui-field-title layui-anim layui-anim-up" v-show="switchBox.subjectConfirm" style="margin-top: 30px;">
+            <legend>科目时间配置</legend>
+        </fieldset>
+        <div class="layui-form-item d-flex flex-column layui-anim layui-anim-up" v-if="switchBox.subjectConfirm" style="padding-left: 15px;padding-right: 15px;">
+            <div style="padding-left: 10px;">
+                <h1>考试科目 {{subjectConfigList[i].subjectName}}</h1>
+            </div>
+
+            <div class="float-right">
+                <label class="layui-form-label">开考时间 {{beginTime}}</label>
+            </div>
+
+            <div class="float-right">
+                <label class="layui-form-label">结束时间 {{endTime}}</label>
+            </div>
+            <div class="float-right">
+                <label class="layui-form-label">考试时长 {{examTime}} 分钟</label>
+            </div>
+        </div>
+        <div class="layui-form-item layui-anim layui-anim-up" v-show="switchBox.subjectConfirm" style="padding-left: 15px;padding-right: 15px;">
+            <div class="layui-inline">
+                <label class="layui-form-label" style="width: 105px;">xx 考试日期</label>
+                <div class="layui-input-inline">
+                    <!--
+                    <select name="examDate" lay-verify="required" lay-search="" id="dateSelect" lay-filter="dateSelect">
+                        <option value="">选择日期</option>
+                        <option v-for="dt in dateList" :value="dt">{{dt}}</option>
+                    </select>
+                    -->
+                    <input type="text" class="layui-input" id="test-limit1" placeholder="yyyy-MM-dd">
+                </div>
+            </div>
+            <div class="layui-inline" style="float: right;">
+                <label class="layui-form-label"style="width: 140px;">xx 开考时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="examBeginTime" placeholder="HH:mm:ss">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-anim layui-anim-up" v-show="switchBox.subjectConfirm" style="padding-left: 15px;padding-right: 15px;">
+            <div class="layui-inline">
+                <label class="layui-form-label" style="width: 105px;">xx 考试时长</label>
+                <div class="layui-input-inline"  style="position: absolute; z-index: 100;">
+                    <select name="examTime" lay-verify="required" lay-search="" id="timeSelect" lay-filter="timeSelect">
+                        <option value="">选择时长</option>
+                        <option v-for="int in 18" :value="int+'0'">{{int}}0 分钟</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline layui-btn-container" style="float: right;padding-right: 13%;">
+                <button type="button" class="layui-btn" @click="loadSubjectConfig(i--)" :disabled="i==0">上一个</button>
+                <button type="button" class="layui-btn" id="checkSubjectBtn" @click="loadSubjectConfig(i++)">确认并下一个</button>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- right -->
+    <div class="boxItem d-flex flex-column" style="background: rgba(255,248,220,0.9); padding: 1% 1% 1% 1%;">
+        <div class="boxItem" style="background: rgba(64,224,208,0.9);">
+            <div style="width: 100%; height: 70%;" class="d-flex flex-column">
+                <div class="showWindow-item d-flex flex-row">
+                    <div class="flex-fill text-center">
+                        <p style="margin-top: 14px; padding: 0px;">xxx</p>
+                    </div>
+                    <div class="flex-fill text-center" style="vertical-align: center;">
+                        <p style="margin-top: 14px; padding: 0px;">xxx</p>
+                    </div>
+                    <div class="flex-fill text-center">
+                        <p style="margin-top: 14px; padding: 0px;">xxx</p>
+                    </div>
+                    <div class="flex-fill text-center">
+                        <p style="margin-top: 14px; padding: 0px;">xxx</p>
+                    </div>
+                    <div class="flex-fill text-center">
+                        <p style="margin-top: 14px; padding: 0px;">xxx</p>
+                    </div>
+                    <div class="flex-fill text-center">
+                        <button type="button" class="btn btn-dark" style="margin-top: 8px;" @click="continueCreating(creatingExam.id, creatingExam.stepCount)">继续</button>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex bd-highlight" style="width: 100%; height: 30%; background: rgba(0,0,0,0.6)">
+                <div class="p-2 flex-grow-1 bd-highlight d-flex flex-column">
+                    <div class="d-flex align-items-center" style="width: 100%; flex: 1;">
+                        <h1 class="display-1" style="color: whitesmoke; font-size: 40px;">创建中的考试</h1>
+                    </div>
+                    <div class="d-flex align-items-center" style="width: 100%; flex: 1;">
+                        <input type="text" class="form-control" placeholder="可以搜索所有的考试历史" aria-label="exam-history">
+                    </div>
+                </div>
+                <div class="p-2 bd-highlight d-flex align-items-center" style="width: 30%; padding-left: 9%; padding-right: 3%;">
+                    <button type="button" class="btn btn-dark btn-lg" style="height: 90%; width: 100%; font-size: 32px;"><i class="bi bi-search" style="font-size: 40px;"></i>&nbsp;&nbsp;搜索</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var stepVue = new Vue({
+        el : "#step-3",
+        data : {
+            dateList : [],
+            subjectList : null,
+            checkedSubjectList : [],
+            subjectConfigModel : {
+                examId : "",
+                subjectId : "",
+                subjectName : "",
+                beginTime : "",
+                endTime : "",
+            },
+            switchBox : {
+                subjectConfirm : false,
+            },
+            date : "",
+            beginTime : "",
+            endTime : "",
+            examTime : 0,
+            subjectConfigList : [],
+            i : 0,
+        },
+        methods : {
+            saveData : function(){
+                //TODO:
+                var subjectConfigList = stepVue.subjectConfigList;
+                if (subjectConfigList==undefined){
+                    return false;
+                }
+
+                examRegistVue.submitDataFirst.subjectList = subjectConfigList;
+                var step = "firstStep"
+                var dataParam = examRegistVue.submitDataFirst;
+                debugger
+                examRegistVue.doSubmit(step, dataParam);
+                //TODO: 由于是测试才设置为return false
+                return true;
+            },
+            initHiddenLayui : function(examBeginDate, examEndDate){
+                layui.use(['form', 'layedit', 'laydate'], function () {
+                    var form = layui.form
+                        ,layer = layui.layer
+                        ,layedit = layui.layedit
+                        ,laydate = layui.laydate;
+
+                    //时间选择器
+                    laydate.render({
+                        elem: '#examBeginTime'
+                        ,type: 'time',
+                        done: function (value, date, endDate) {
+                            stepVue.beginTime = value;
+                        }
+                    });
+
+
+                    var ins22 = laydate.render({
+                        elem: '#test-limit1',
+                        min: examBeginDate,
+                        max: examEndDate,
+                        ready: function () {
+                            ins22.hint('可选日期范围: ' + examBeginDate + "~" + examEndDate);
+                        }
+                    })
+
+                    form.on('select(dateSelect)', function (data) {
+                        //TODO 选择该科目所在的日期（从考试日期中选取）
+                        stepVue.date = data.value;
+                    })
+                    form.on('select(timeSelect)', function (data) {
+                        //TODO 选择考试时长，并计算出考试结束时间
+                        stepVue.examTime = data.value;
+                    })
+
+                    form.render();
+                })
+            },
+            refreshTimeInput : function(){
+                $("#test-limit1").val('');
+                $('#examBeginTime').val('');
+                $('#timeSelect').val('');
+                layui.use(['form'], function () {
+                    var form = layui.form;
+                    form.render();
+                })
+            },
+            loadSubjectConfig : function(index){
+                //TODO: 填充 subjectConfigList
+                var endTime = this.calculateEndTime(stepVue.beginTime, stepVue.examTime);
+                console.log(stepVue.subjectConfigList);
+
+                stepVue.subjectConfigList[index].beginTime = stepVue.beginTime;
+                stepVue.subjectConfigList[index].endTime = endTime;
+                debugger;
+
+                this.refreshTimeInput();
+
+                if (index == stepVue.subjectList.length-1){
+                    $("#checkSubjectBtn").attr("disabled", "disabled");
+                }else{
+                    if ($("#checkSubjectBtn").attr("disabled")){
+                        $("#checkSubjectBtn").removeAttr("disabled");
+                    }
+                }
+            },
+            loadSubjectList : function(){
+                var model = stepVue.subjectConfigModel;
+                $("#getSubjectListBtn").trigger("click");
+                console.log(stepVue.checkedSubjectList);
+                //debugger
+                stepVue.checkedSubjectList.forEach((entry)=>{
+                    //debugger
+                    var model = JSON.parse(JSON.stringify(stepVue.subjectConfigModel));
+                    model.subjectId = entry.value;
+                    model.subjectName = entry.title;
+                    stepVue.subjectConfigList.push(model);
+
+                })
+
+                var examBeginDate = examRegistVue.submitDataFirst.beginDate;
+                var examEndDate = examRegistVue.submitDataFirst.endDate;
+
+                this.initHiddenLayui(examBeginDate, examEndDate);
+                this.switchBox.subjectConfirm = true;
+
+
+                //setTimeout(()=>{
+                //    this.initHiddenLayui();
+                //}, 1000)
+            },
+            calculateEndTime : function(beginTime, examTime){
+                var timeStr = beginTime.split(":");
+                var hour = parseInt(timeStr[0]);
+                var min = parseInt(timeStr[1])+parseInt(examTime);
+
+                if (min >= 60){
+                    while (min >= 60){
+                        min -= 60;
+                        hour++;
+
+                    }
+
+                    min = parseTimeNumber(min);
+                    hour = parseTimeNumber(hour);
+                }
+
+                function parseTimeNumber(timeNum) {
+                    if (timeNum=="0"||timeNum==0){
+                        return "00";
+                    }
+                    var len = 0;
+                    var i = timeNum;
+                    while (i >= 1){
+                        i = i/10;
+                        len++;
+                    }
+                    if (len==1){
+                        return "0" + timeNum + "";
+                    }
+                    return timeNum;
+                }
+
+                return hour + ":" + min + ":" + timeStr[2];
+
+            },
+            getSubjectList : function(){
+                var gradeId = examRegistVue.submitDataFirst.gradeId;
+                if (gradeId==""){
+                    return ;
+                }
+                $.ajax({
+                    url : "${ctxPath}/happy-study/gradeMan/list/examSubject/"+gradeId,
+                    type : 'get',
+                    async : false,
+                    //data : {gradeId : gradeId},
+                    success : response=>{
+                        var resData = response.resData;
+                        this.subjectList = resData;
+                    }
+                })
+            },
+            getDateList : function () {
+                var bigMonth = [1,3,5,7,8,10,12];
+                var smallMonth = [4,6,9,11];
+                var beginDate = examRegistVue.beginDate.split("-");
+                var endDate = examRegistVue.endDate.split("-");
+                var dayCount = 0
+                function pushDate(year, month, beginDay, dayCount) {
+                    for (var i = 0; i < dayCount; i++){
+                        var day2 = beginDay+i;
+                        stepVue.dateList.push(year+"-"+month+"-"+day2);
+                    }
+                }
+                if (endDate[1]>beginDate[1]){
+                    for (var bm in bigMonth){
+                        if (bm==beginDate[1]){
+                            dayCount = 31-beginDate[2];
+                            break;
+                        }
+                    }
+                    if (dayCount==0){
+                        for (var sm in smallMonth){
+                            if (sm == beginDate[1]){
+                                dayCount = 30-beginDate[2];
+                                break;
+                            }
+                        }
+                    }
+                    if (dayCount==0){
+                        dayCount = 28-beginDate[2];
+                    }
+                    pushDate(beginDate[0], beginDate[1], beginDate[2], dayCount);
+                    pushDate(beginDate[0], endDate[1], beginDate[2], endDate[2]);
+                }else{
+                    dayCount = endDate[2]-endDate[1];
+                    pushDate(beginDate[0], beginDate[1], beginDate[2], dayCount);
+                }
+            }
+        },
+        mounted : function(){
+            //this.getDateList()
+            this.getSubjectList();
+        }
+    })
+
+    /*
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var form = layui.form
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+
+        //时间选择器
+        laydate.render({
+            elem: '#examBeginTime'
+            ,type: 'time'
+        });
+
+        form.on('select(dateSelect)', function (data) {
+            //TODO 选择该科目所在的日期（从考试日期中选取）
+            stepVue.date = data.value;
+        })
+        form.on('select(timeSelect)', function (data) {
+            //TODO 选择考试时长，并计算出考试结束时间
+            stepVue.examTime = data.value;
+        })
+
+        form.render();
+    })
+
+     */
+    layui.use(['transfer', 'layer', 'util'], function () {
+        var $ = layui.$
+            ,transfer = layui.transfer
+            ,layer = layui.layer
+            ,util = layui.util;
+
+        //模拟数据
+        var data1 = [];
+
+        for (var i=0; i < stepVue.subjectList.length; i++){
+            var model = {
+                value : "",
+                title : ""
+            }
+            model.value = stepVue.subjectList[i].id;
+            model.title = stepVue.subjectList[i].name;
+            data1.push(model);
+        }
+
+        //基础效果
+        transfer.render({
+            elem: '#test1'
+            ,data: data1
+            ,id: 'key123' //定义唯一索引
+            ,title: ['可选科目', '已选科目']
+            ,showSearch: true
+            //穿梭时的回调
+            ,onchange: function(obj, index){
+                //var arr = ['左边', '右边'];
+                layer.alert('数据：'+ JSON.stringify(obj)); //获得被穿梭时的数据
+            }
+        })
+
+        //批量办法定事件
+        util.event('lay-demoTransferActive', {
+            getData: function(othis){
+                var getData = transfer.getData('key123'); //获取右侧数据
+                stepVue.checkedSubjectList = getData;
+                layer.alert(JSON.stringify(getData));
+
+            }
+            ,reload:function(){
+                //实例重载
+                transfer.reload('key123', {
+                    title: ['可选科目', '已选科目']
+                    ,value: ['2', '5', '9']
+                    ,showSearch: true
+                })
+            }
+        });
+    })
+
+</script>

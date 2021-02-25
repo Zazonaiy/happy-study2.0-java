@@ -1,0 +1,378 @@
+<link rel="stylesheet" href="${ctxPath}/css/man.css">
+
+<style>
+    .anime-test {
+        width: 100px;
+        height: 100px;
+    }
+    .msgInput-top {
+        margin-top: 20px !important;
+    }
+    .msgInput {
+        margin-bottom: 1rem !important;
+    }
+    .msgInput-bottom {
+        margin-bottom: 40px !important;
+    }
+</style>
+
+<div id="user-add" class="man-container" style=" background: #0c5460">
+    <div class="container-fluid" style="position: absolute; top: 80px;padding-right: 30px; padding-left: 0px; z-index: 5000">
+        <div class="alert alert-success alert-dismissible fade show" hidden>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>成功!</strong> 指定操作成功提示信息。
+        </div>
+        <div class="alert alert-danger alert-dismissible fade show" hidden>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>错误!</strong> 失败的操作。
+        </div>
+
+    </div>
+    <p id="actionTag" hidden>${action}</p>
+
+    <div style="width: 100%; height: 685px; margin-top: 20px;" class="d-flex flex-row">
+        <div class="d-flex flex-row" style="width:50%; height:100%;">
+            <div class="d-flex flex-column justify-content-end">
+                <div class="anime-test d-flex flex-column justify-content-center" align="center" style="background: yellow" data-x="300" @click="doAnime()">
+                    <h3 text-align="center">快乐</h3>
+                </div>
+                <div class="anime-test d-flex flex-column justify-content-center" align="center" style="background: yellow" data-x="600" @click="doAnime()">
+                    <h2 text-align="center">高效</h2>
+                </div>
+                <div class="anime-test d-flex flex-column justify-content-center" align="center" style="background: yellow" data-x="100" @click="doAnime()">
+                    <h3 text-align="center">UP ↑</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-anim layui-anim-fadein d-flex flex-row align-items-center justify-content-center" style=" width: 50%; height: 100%;">
+            <div class="d-flex flex-column justify-content-center shadow p-3 mb-5 bg-white rounded" style="background: rgba(0, 0, 0, 0.2); width: 70%; height: 70%;">
+                <div class="d-flex flex-column" style="height: 100%; width: 100%; padding: 8% 2% 5% 2%;">
+                    <h2 style="; margin-bottom: 40px;">${title}</h2>
+                    <div class="layui-form" lay-filter="userEditForm">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label" style="width: 100px;">账号类型</label>
+                            <div class="layui-inline">
+                                <div class="layui-input-inline" style="width: 100%;"><select name="memberType" lay-verify="required" lay-search="" id="memberTypeSelect" lay-filter="memberTypeSelect"
+                                    :disabled="action=='update'">
+                                    <option value="">选择用户类型</option>
+                                    <option v-for="type in memberTypeList" :value="type.typeCode">{{type.typeDescription}}</option>-->
+                                </select></div>
+                            </div>
+                            <i class="bi bi-check2-circle text-primary" style="font-size: 22px;" v-show="show.memberTypeSucTag"></i>
+                            <i class="bi bi-question-circle" style="font-size: 22px; color: #e38d13;" v-show="!show.memberTypeSucTag&&action=='add'"></i>
+                            <i class="bi bi-check2-circle text-primary" style="font-size: 22px;" v-show="action=='update'"></i>
+
+                        </div>
+                    </div>
+                    <div class="input-group mb-3" style="margin-bottom: 10px; margin-top: 20px !important;" id="noGroup"  v-if="action=='add'">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button" id="button-addon1" disabled>Check</button>
+                        </div>
+                        <input type="text" class="form-control" placeholder="学号/教职工号" aria-label="Example text with button addon" aria-describedby="button-addon1"
+                               @blur="checkNo()" v-model="current.memberNo" :disabled="action=='update'">
+                    </div>
+                    <div class="input-group mb-3 msgInput" v-bind:class="{'msgInput':action=='add', 'msgInput-top':action=='update'}" id="usernameGroup">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button" id="button-addon2" disabled>Check</button>
+                        </div>
+                        <input type="text" class="form-control" placeholder="请输入账号" aria-label="Example text with button addon" aria-describedby="button-addon1"
+                               @blur="checkUsername()" v-model="current.username">
+                    </div>
+                    <div class="input-group mb-3" v-bind:class="{'msgInput-bottom':action=='add', 'msgInput':action=='update'}" id="passwordGroup">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button" id="button-addon3" disabled>Check</button>
+                        </div>
+                        <input type="text" class="form-control" placeholder="请输入密码" aria-label="Example text with button addon" aria-describedby="button-addon1"
+                               @blur="checkPassword()" v-model="current.password">
+                    </div>
+                    <div class="input-group mb-3" style="margin-bottom: 40px !important;" id="newPasswordGroup" v-if="action=='update'">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button" id="button-addon4" disabled>Check</button>
+                        </div>
+                        <input type="text" class="form-control" placeholder="请输入新密码" aria-label="Example text with button addon" aria-describedby="button-addon1"
+                               @blur="checkNewPassword()" v-model="current.newPassword">
+                    </div>
+                    <div>
+                        <button class="btn btn-outline-primary btn-lg btn-block" @click="submit()">${title}</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var userRegistVue = new Vue({
+        el : "#user-add",
+        data : {
+            action : "add",
+            baseInfo : {
+                infoArray : null,
+            },
+            pageParam : {
+                filter : {
+                    keyword : "",
+                }
+            },
+            show : {
+                detailMsg : false,
+                memberTypeSucTag : false,
+            },
+            url : {
+
+            },
+            current : {
+                memberNo : "",
+                username : "",
+                password : "",
+                memberType : "",
+                newPassword : "",
+            },
+            anime : {
+                test : null
+            },
+            btClass : {
+                dangerBorder : "border border-danger",
+                dangerText : "text-danger",
+                successBorder : "border border-success",
+                successText : "text-success",
+            },
+            memberTypeList : null,
+        },
+        methods : {
+            judgData : function(){
+                debugger;
+                if (this.current.memberType==""){
+                    if (this.action=="add"){
+                        layer.msg("请选择账号类型", {icon : 5})
+                        return false;
+                    }
+
+                }
+                var errorCount = $(".border-danger").toArray().length;
+                if (errorCount!=0){
+                    debugger;
+                    layer.msg("请补全账号信息", {icon : 5})
+                    return false;
+                }
+                return true;
+            },
+            submit : function(){
+                debugger;
+                var memberNo = this.current.memberNo;
+                var username = this.current.username;
+                var password = this.current.password;
+                var memberType = this.current.memberType;
+                var dataParam = {
+                    memberNo : memberNo,
+                    username : username,
+                    password : password,
+                    memberType : memberType
+                }
+                if (this.action=="update"){
+                    dataParam.newPassword = this.current.newPassword;
+                }
+
+                if (!this.judgData()){
+                    return ;
+                }
+
+                var url = "${ctxPath}/happy-study/userMan/doEdit/"+this.action;
+                $.ajax({
+                    url : url,
+                    type : "post",
+                    data : JSON.stringify(dataParam),
+                    contentType : "application/json;charset=utf-8",
+                    async : false,
+                    success : response=>{
+                        console.log(response.state)
+                        var action = userRegistVue.action;
+                        var msg = action=='add' ? "注册" : "修改"
+                        debugger;
+                        if (response.state==1){
+                            debugger;
+                            layer.msg(msg+"成功", {icon : 6})
+                        }else {
+                            layer.msg(response.description, {icon : 5});
+                        }
+                    },
+                    error : ()=>{
+                        layer.msg(msg+"失败", {icon : 5})
+                    }
+
+                })
+
+
+            },
+            checkNewPassword : function(){
+                var password = this.current.password;
+                var newPassword = this.current.newPassword;
+
+                if (newPassword==password || newPassword==""){
+                    this.setInputError($("#newPasswordGroup"));
+                    return ;
+                }
+                this.setInputSuccess($("#newPasswordGroup"));
+            },
+            checkPassword : function(){
+                //TODO: 检查学号/教职工号是否存在
+                var password = this.current.password;
+                if (password==""||password.length<2){
+                    this.setInputError($("#passwordGroup"));
+                    return ;
+                }
+                this.setInputSuccess($("#passwordGroup"));
+            },
+            checkUsername : function(){
+                //TODO: 检查账号
+                var username = this.current.username;
+                if (username==""){
+                    this.setInputError($("#usernameGroup"))
+                }
+                var action = this.action;
+                $.get("${ctxPath}/happy-study/userMan/query/username/isExist", {username : username}, response=>{
+                    if (response.state==1){
+                        //this.setInputSuccess($("#usernameGroup"))
+                        if (action=="add"){
+                            this.setInputSuccess($("#usernameGroup"))
+                        }else{
+                            this.setInputError($("#usernameGroup"));
+                        }
+                    }else if (response.state==0){
+                        if (action=="add"){
+                            this.setInputError($("#usernameGroup"));
+                        }else{
+                            this.setInputSuccess($("#usernameGroup"))
+                        }
+                        //this.setInputError($("#usernameGroup"));
+                    }
+                })
+            },
+            checkNo : function(){
+                //检查学号/教职工号是否存在
+                var memberNo = this.current.memberNo;
+                var memberType = this.current.memberType;
+                debugger
+                if (memberType==""){
+                    //debugger
+                    userRegistVue.show.memberTypeSucTag = false;
+                }
+                /*
+                $.get("${ctxPath}/happy-study/userMan/query/member/isExist", {memberNo : memberNo, memberType : memberType}, response=>{
+                    if (response.state==1){
+                        userRegistVue.setInputSuccess($("#noGroup"))
+                    }else if (response.state==0){
+                        userRegistVue.setInputError($("#noGroup"));
+                    }
+                })*/
+                $.ajax({
+                    url : "${ctxPath}/happy-study/userMan/query/member/isExist",
+                    type : "get",
+                    async : true,
+                    data : {memberNo : memberNo, memberType : memberType},
+                    success : response=>{
+                        if (response.state==1){
+                            userRegistVue.setInputSuccess($("#noGroup"))
+                        }else if (response.state==0){
+                            userRegistVue.setInputError($("#noGroup"));
+                        }
+                    },
+                    error : ()=>{
+                        userRegistVue.setInputError($("#noGroup"));
+                    }
+                })
+                //this.setInputError($("#noGroup"));
+            },
+            setInputSuccess : function($group){
+                debugger
+                var cInput = this.btClass.successBorder + " " + this.btClass.successText;
+                var cBtn = this.btClass.successBorder + " " + this.btClass.successText;
+                var eInput = this.btClass.dangerBorder + " " + this.btClass.dangerText;
+                var eBtn = this.btClass.dangerBorder + " " + this.btClass.dangerText;
+                debugger
+                $group.find('input').removeClass(eInput);
+                $group.find('button').removeClass(eBtn);
+                $group.find('input').addClass(cInput);
+                $group.find('button').addClass(cBtn);
+            },
+            setInputError : function($group){
+                var eInput = this.btClass.dangerBorder + " " + this.btClass.dangerText;
+                var eBtn = this.btClass.dangerBorder + " " + this.btClass.dangerText;
+                var cInput = this.btClass.successBorder + " " + this.btClass.successText;
+                var cBtn = this.btClass.successBorder + " " + this.btClass.successText;
+                $group.find('input').removeClass(cInput);
+                $group.find('button').removeClass(cBtn);
+                $group.find('input').addClass(eInput);
+                $group.find('button').addClass(eBtn);
+            },
+            getMemberTypeList : function(){
+                $.ajax({
+                    url : "${ctxPath}/happy-study/userMan/list/memberType",
+                    type : "get",
+                    async : false,
+                    data : {},
+                    success : response=>{
+                        this.memberTypeList = response.resData;
+                    }
+                })
+            },
+            getAction : function(){
+                this.action = $("#actionTag").text();
+            },
+            initLayUI : function(){
+                layui.use(['form'], function () {
+                    var form = layui.form;
+
+                    form.on('select(memberTypeSelect)', function (data) {
+                        userRegistVue.current.memberType = data.value;
+                        if (data.value!=""){
+                            userRegistVue.show.memberTypeSucTag = true;
+                        }else{
+                            userRegistVue.show.memberTypeSucTag = false;
+                        }
+                        //debugger;
+                        userRegistVue.checkNo();
+                    })
+
+                    form.render();
+                })
+            },
+            doAnime : function(){
+                this.anime.test.restart();
+                //this.anime.test.reverse()
+            },
+            initAnime : function () {
+                //$(".anime-test").attr("data-x", 500)
+                this.anime.test = anime({
+                    targets: '.anime-test',
+                    translateX: function(el, i) {
+                        return el.getAttribute('data-x');
+                    },
+                    translateY: function(el, i) {
+                        return 50 + (-275 * i);
+                    },
+                    scale: function(el, i, l) {
+                        return (l - i) + .25;
+                    },
+                    rotate: function() { return anime.random(-360, 360); },
+                    borderRadius: function() { return ['30%', anime.random(10, 35) + '%']; },
+                    duration: function() { return anime.random(1200, 1800); },
+                    delay: function() { return anime.random(0, 400); },
+                    direction: 'alternate',
+                    loop: false,
+                });
+            }
+        },
+        mounted : function () {
+            this.getAction();
+            this.getMemberTypeList();
+            this.$nextTick(function () {
+                this.initAnime();
+                this.initLayUI();
+            });
+        }
+    })
+</script>

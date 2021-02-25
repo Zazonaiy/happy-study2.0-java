@@ -1,0 +1,83 @@
+<div class="container-fluid">
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <label>学号: {{score.sNo}}</label>
+        </div>
+        <div class="col-4">
+            <label>姓名: {{score.studentName}}</label>
+        </div>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <label>班级: {{score.clazzName}}</label>
+        </div>
+        <div class="col-4">
+            <label>年级: {{score.gradeName}}</label>
+        </div>
+    </div>
+    <hr class="simple" color="#6f5499" />
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <label>考试: {{score.examName}}</label>
+        </div>
+        <div class="col-4">
+            <label>科目: {{score.subjectName}}</label>
+        </div>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <label>分数: {{score.score}}</label>
+        </div>
+        <div class="col-4">
+            <label>年级排名: TODO</label>
+        </div>
+    </div>
+
+    <hr class="simple" color="#6f5499" />
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <label>分值等级: {{score.scoreType.typeDescription}}</label>
+        </div>
+        <div class="col-4">
+            <label>改卷教师: {{score.marTeacherName}}</label>
+        </div>
+    </div>
+
+
+</div>
+
+<script>
+    function loadModalData(score) {
+        var modalVue = new Vue({
+            el : "#modal-content",
+            data : {
+                score : score,
+            },
+            methods : {
+                //loadData : function () {
+                //    this.score = scoreBaseInfoVue.detailMsg.score;
+                //}
+            },
+            mounted : function () {
+                //this.loadData();
+            }
+        })
+    }
+
+    /**
+     * var modalVue = new Vue({
+        el : "#modal-content",
+        data : {
+            score : null,
+        },
+        methods : {
+            loadData : function () {
+                this.score = scoreBaseInfoVue.detailMsg.score;
+            }
+        },
+        mounted : function () {
+            this.loadData();
+        }
+    })
+     */
+</script>

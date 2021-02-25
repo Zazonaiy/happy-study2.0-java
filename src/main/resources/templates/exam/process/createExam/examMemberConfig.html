@@ -1,0 +1,1126 @@
+<style>
+    .boxItem {
+        width: 100%;
+        height: 100%;
+    }
+    .layui-form-select dl {
+        max-height: 200px;
+    }
+    .editing {
+        background: #01AAED !important;
+    }
+</style>
+
+<div style="width: 100%; height: 100%;" class="d-flex flex-row" id="step-4">
+    <!-- left -->
+    <div class="boxItem layui-form layui-anim layui-anim-fadein" style="padding-right: 1%; max-height:100%; overflow-y: auto; overflow-x: hidden; white-space: nowrap;">
+        <div class="layui-form-item" style="padding-left: 15px;padding-right: 15px;">
+            <div class="layui-inline">
+                <label class="layui-form-label" style="width: 130px;">选择配置科目</label>
+                <div class="layui-input-inline">
+                    <select name="examSubject" lay-verify="required" lay-search="" id="subjectSelect" lay-filter="subjectSelect">
+                        <option value="">选择科目</option>
+                        <option v-for="subject in subjectList" :value="subject.id">{{subject.subjectName}}</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <button class="btn btn-outline-info" @click="saveSubjectMemberConfig()">保存</button>
+                </div>
+            </div>
+            <div class="layui-btn-container">
+                <div class="layui-inline justify-content-center" style="height: 100%; margin-left: 10px; padding-top: 10px;"><i class="bi bi-check" style="font-size: 22px; color: #00c0ef;">已保存</i></div>
+                <div class="layui-inline justify-content-center" style="height: 100%; margin-left: 10px; padding-top: 10px;"><i class="bi bi-x-diamond" style="font-size: 22px; color: #e38d13;">编辑中</i></div>
+            </div>
+        </div>
+        <div class="layui-form-item d-flex flex-column" style="padding-left: 15px;padding-right: 15px;">
+            <div class="layui-input-inline">
+                <label class="layui-form-label" style="width: 250px;margin-right: 50px;">使用相同的学生配置（每个科目）</label>
+                <input type="checkbox" name="sameStudentConfig" lay-skin="switch"
+                       lay-filter="sameStudentConfig" lay-text="开启|关闭">
+            </div>
+            <div class="layui-input-inline">
+                <label class="layui-form-label" style="width: 300px;">使用相同的监考人员配置（每个科目）</label>
+                <input type="checkbox" name="sameInvTeacherConfig" lay-skin="switch"
+                       lay-filter="sameInvTeacherConfig" lay-text="开启|关闭">
+            </div>
+            <div class="layui-input-inline">
+                <label class="layui-form-label" style="width: 300px;">使用相同的改卷人员配置（每个科目）</label>
+                <input type="checkbox" name="sameMarTeacherConfig" lay-skin="switch"
+                       lay-filter="sameMarTeacherConfig" lay-text="开启|关闭">
+            </div>
+        </div>
+
+        <fieldset v-if="editing" class="layui-elem-field layui-field-title layui-anim layui-anim-up promiseTag" style="margin-top: 30px;">
+            <legend>监考人员配置</legend>
+        </fieldset>
+        <div v-if="editing" class="layui-form-item layui-anim layui-anim-up promiseTag" style="padding-left: 15px;padding-right: 15px;">
+            <div class="layui-inline">
+                <label class="layui-form-label" style="width: 160px;">监考员人数(?人/间)</label>
+                <div class="layui-input-inline">
+                    <select name="invTeacherCountPerRoom" lay-verify="required" lay-search="" id="invTeacherCountPerRoomSelect" lay-filter="invTeacherCountPerRoomSelect">
+                        <option value="">选择人数</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <button type="button" class="layui-btn">确认</button>
+                </div>
+            </div>
+        </div>
+        <div v-if="editing" class="layui-form-item promiseTag" style="padding-left: 15px;padding-right: 15px;">
+            <div class="layui-inline">
+                <label class="layui-form-label" style="width: 120px;margin-right: 40px;">当前配置考室</label>
+                <div class="layui-input-inline">
+                    <select name="room" lay-verify="required" lay-search="" id="roomSelectForTeacher" lay-filter="roomSelectForTeacher">
+                        <option value="" v-if="roomList==null">选择考室</option>
+                        <option v-for="room in roomList" :value="room.id">{{room.roomName}}</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+        <div v-if="editing" class="layui-form-item layui-anim layui-anim-up promiseTag" style="padding-left: 15px;padding-right: 15px;">
+            <label class="layui-form-label" style="width: 100%; text-align: left">配置监考员</label>
+            <div class="layui-input-inline">
+                <div id="invTeacherConfig" class="demo-transfer"></div>
+            </div>
+            <div class="layui-input-inline d-flex align-items-end" style="height: 360px;float: right;">
+                <div class="layui-btn-container" style="float: right;">
+                    <button type="button" class="layui-btn">确认</button>
+                    <button type="button" class="layui-btn" @click="nextRoomInvTeacherConfig()" id="nextInvConfigBtn">确认并下一个</button>
+                </div>
+            </div>
+        </div>
+
+        <fieldset v-if="editing" class="layui-elem-field layui-field-title layui-anim layui-anim-up promiseTag" style="margin-top: 30px;">
+            <legend>改卷人员配置</legend>
+        </fieldset>
+        <div v-if="editing" class="layui-form-item layui-anim layui-anim-up promiseTag" style="padding-left: 15px;padding-right: 15px;">
+            <div class="layui-input-inline">
+                <div id="marTeacherConfig" class="demo-transfer"></div>
+            </div>
+            <div class="layui-input-inline d-flex align-items-end" style="height: 360px;float: right;">
+                <div class="layui-btn-container" style="float: right;">
+                    <button type="button" class="layui-btn" @click="confirmMarTeacherConfig()">确认</button>
+                </div>
+            </div>
+        </div>
+
+        <fieldset v-if="editing" class="layui-elem-field layui-field-title layui-anim layui-anim-up promiseTag" style="margin-top: 30px;">
+            <legend>考生配置</legend>
+        </fieldset>
+        <div v-if="editing" class="layui-form-item layui-anim layui-anim-up promiseTag" style="padding-left: 15px;padding-right: 15px;">
+            <div class="layui-input-inline">
+                <label class="layui-form-label" style="width: 105px;">xx人/间考室</label>
+            </div>
+        </div>
+        <div v-if="editing" class="layui-form-item layui-anim layui-anim-up promiseTag" style="padding-left: 15px;padding-right: 15px;">
+            <div class="layui-input-inline">
+                <label class="layui-form-label" style="width: 150px;">考生随机分配考室</label>
+                <input type="checkbox" name="randomStudent" lay-skin="switch"
+                       lay-filter="randomStudent" lay-text="开启|关闭">
+            </div>
+        </div>
+        <div v-if="editing" class="layui-form-item promiseTag" style="padding-left: 15px;padding-right: 15px;" v-show="!randomStudent">
+            <div class="layui-inline">
+                <label class="layui-form-label" style="width: 105px;">选择考室</label>
+                <div class="layui-input-inline">
+                    <select name="room" lay-verify="required" lay-search="" id="roomSelectForStudent" lay-filter="roomSelectForStudent">
+                        <option value="" v-if="roomList==null">选择考室</option>
+                        <option v-for="room in roomList" :value="room.id">{{room.roomName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item" style="padding-left: 15px;padding-right: 15px;">
+                <div class="layui-input-inline">
+                    <div id="studentRoomConfig" class="demo-transfer"></div>
+                </div>
+                <div class="layui-input-inline d-flex align-items-end" style="height: 360px;float: right;">
+                    <div class="layui-btn-container" style="float: right;">
+                        <button type="button" class="layui-btn">确认</button>
+                        <button type="button" class="layui-btn" @click="nextRoomStudentConfig()" id="nextStudentConfigBtn">确认并下一个</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- right -->
+    <div class="boxItem d-flex flex-column" style="background: rgba(255,248,220,0.9); padding: 1% 1% 1% 1%;">
+        <div class="boxItem" style="background: rgba(64,224,208,0.9);">
+            <div style="width: 100%; height: 70%;" class="d-flex flex-column">
+                <div v-for="subject in subjectList" class="showWindow-item d-flex flex-row" :class="{'editing':subject.id==current.subject.id}">
+                    <div class="flex-fill text-center">
+                        <p style="margin-top: 14px; padding: 0px;">{{subject.subjectName}}</p>
+                    </div>
+                    <div class="flex-fill text-center" style="vertical-align: center;">
+                        <p style="margin-top: 14px; padding: 0px;">xxx</p>
+                    </div>
+                    <div class="flex-fill text-center">
+                        <p style="margin-top: 14px; padding: 0px;">xxx</p>
+                    </div>
+                    <div class="flex-fill text-center">
+                        <p style="margin-top: 14px; padding: 0px;">xxx</p>
+                    </div>
+                    <div class="flex-fill text-center">
+                        <p style="margin-top: 14px; padding: 0px;">xxx</p>
+                    </div>
+                    <div class="flex-fill text-center">
+                        <button type="button" class="btn btn-dark" style="margin-top: 8px;" @click="jumpTo(subject.id)">继续</button>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex bd-highlight" style="width: 100%; height: 30%; background: rgba(0,0,0,0.6)">
+                <div class="p-2 flex-grow-1 bd-highlight d-flex flex-column">
+                    <div class="d-flex align-items-center" style="width: 100%; flex: 1;">
+                        <h1 class="display-1" style="color: whitesmoke; font-size: 40px;">创建中的考试</h1>
+                    </div>
+                    <div class="d-flex align-items-center" style="width: 100%; flex: 1;">
+                        <input type="text" class="form-control" placeholder="可以搜索所有的考试历史" aria-label="exam-history">
+                    </div>
+                </div>
+                <div class="p-2 bd-highlight d-flex align-items-center" style="width: 30%; padding-left: 9%; padding-right: 3%;">
+                    <button type="button" class="btn btn-dark btn-lg" style="height: 90%; width: 100%; font-size: 32px;"><i class="bi bi-search" style="font-size: 40px;"></i>&nbsp;&nbsp;搜索</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+
+    var stepVue = new Vue({
+        el : "#step-4",
+        data : {
+            editing : false,
+            isSameStudentConfig : false,
+            isSameInvTeacherConfig : false,
+            isSameMarTeacherConfig : false,
+            randomStudent : false,
+            subjectList : null,
+            roomList : null,
+            roomIndexMap : {},
+            subjectIndexMap : {},
+            studentList : [],
+            teacherList : [],
+            maxSize : 50,
+            model : {
+                teacher : {
+                    id : "",
+                    name : "",
+                },
+                student : {
+                    id : "",
+                    name : "",
+                },
+                memberConfigItem : {
+                    subjectId : "",
+                    invConfig : {
+                        invCount : 0,
+                        roomMemberMap : {
+                            roomId : [],
+                        }
+                    },
+                    marConfig : {
+                        memberList : [],
+                    },
+                    studentConfig : {
+                        randomStudent : false,
+                        roomMemberMap: {
+                            roomId : [], //memberList;
+                        }
+                    }
+                },
+                //roomMemberMap : {
+                //    roomId : "",
+                //    memberList : [],
+                //}
+            },
+            current : {
+                subject : {
+                    id : "",
+                    subjectName : "",
+                    index : 0,
+                },
+                invConfig : {
+                    room : {
+                        id : "",
+                        clazzName : "",
+                        index : 0,
+                    },
+                    invCount : 0,
+                    invTeacherList : [],
+                    chooseableList : [],
+                },
+                marConfig : {
+                    marCount : 0,
+                    marTeacherList : [],
+                    chooseableList : [],
+                },
+                studentConfig : {
+                    room : {
+                        id : "",
+                        clazzName : "",
+                        index : 0,
+                    },
+                    student : [],
+                    chooseableList : [],
+                }
+            },
+            dataList : {
+                invConfig : [],
+                marConfig : [],
+                studentConfig : [],
+            },
+            mainConfig : {
+                //subjectId : "",
+                examId : "",
+                memberConfigList : [],
+            }
+
+        },
+        methods : {
+            saveData : function(){
+                var memberConfigList = stepVue.mainConfig.memberConfigList
+                var subjectList = stepVue.subjectList;
+                debugger;
+                if (memberConfigList.length < subjectList.length){
+                    if (memberConfigList.length==0){
+                        //在使用相同配置的情况下忘记点击保存
+                        this.saveSubjectMemberConfig();
+                    }else{
+                        layer.alert("存在未配置的学科人员配置");
+                        debugger;
+                        return false;
+                    }
+
+                }
+
+                //TODO: send ajax
+
+                var examId = examRegistVue.examId;
+                if (examId==""){
+                    layer.msg("缺少exam对象", {icon : 5});
+                    return false;
+                }
+                var step = "secondStep";
+                var dataParam = stepVue.mainConfig;
+                dataParam.examId = examId;
+                console.log(dataParam);
+                examRegistVue.submitDataSecond.examId = dataParam.examId;
+                examRegistVue.submitDataSecond.memberConfigList = dataParam.memberConfigList;
+                debugger;
+
+                var subRes = examRegistVue.doSubmit(step, dataParam);
+                if (!subRes){
+                    return false;
+                }
+                return true;
+            },
+            jumpTo : function(subjectId){
+                var subjectIndex = stepVue.subjectIndexMap[subjectId];
+                $("#subjectSelect").val(subjectId);
+                stepVue.current.subject.index = subjectIndex;
+                stepVue.current.subject.id = subjectId;
+                stepVue.renderForm();
+
+                stepVue.saveSubjectMemberConfig();
+                if (stepVue.editing){
+                    return ;
+                }
+                stepVue.saveSubjectMemberConfig();
+
+            },
+            renderForm : function(){
+                layui.use(['form'], function () {
+                    var form = layui.form;
+                    form.render();
+                })
+            },
+            saveSubjectMemberConfigWithSame(configName, copy){
+                var subjectList = stepVue.subjectList;
+                var theSame = copy[configName];
+                var roomList = stepVue.roomList;
+                debugger;
+
+                //if (configName!='marConfig'){
+                //    for (var i=0; i<roomList.length; i++){
+                //        //theSame[i].roomMemberMap.roomId = roomList[i].id;
+                //        theSame[i].roomMemberMap[roomList[i].id] = [];
+                //        debugger;
+                //    }
+                //}
+
+                var copyIndex = stepVue.current.subject.index;
+                var modelConfigItem = stepVue.mainConfig.memberConfigList[copyIndex];
+                debugger;
+
+                for (var i=0; i<subjectList.length; i++){
+                    //var memberConfigItem = stepVue.mainConfig.memberConfigList[i];
+                    //debugger;
+                    if (stepVue.mainConfig.memberConfigList[i]==undefined){
+                        //debugger;
+                        stepVue.mainConfig.memberConfigList[i] = JSON.parse(JSON.stringify(modelConfigItem));
+                        stepVue.current.subject.id = subjectList[i].id;
+                        stepVue.current.subjectName = subjectList[i].subjectName;
+                        stepVue.current.index = stepVue.subjectIndexMap[stepVue.current.subject.id];
+                        stepVue.mainConfig.memberConfigList[i].subjectId = subjectList[i].id;
+                        debugger;
+
+                    }
+                    var configItem = stepVue.mainConfig.memberConfigList[i][configName];
+                    configItem = JSON.parse(JSON.stringify(theSame));
+                    //stepVue.mainConfig.memberConfigList[i][configName] = JSON.parse(JSON.stringify(theSame));
+                    console.log(stepVue.mainConfig.memberConfigList)
+                    //debugger;
+                }
+
+                return stepVue.mainConfig.memberConfigList;
+            },
+            loadRoomMemberMap : function(roomMemberMap, config){
+                debugger;
+                for (var i=0; i<config.length; i++){
+                    var roomId = stepVue.roomList[i].id;
+                    var list = config[i];
+                    debugger;
+                    roomMemberMap[roomId] = list;
+                }
+
+                return roomMemberMap;
+            },
+            saveSubjectMemberConfig : function(){
+                if (stepVue.editing){
+                    //保存编辑的数据
+                    var subjectIndex = stepVue.current.subject.index;
+                    var copy = JSON.parse(JSON.stringify(stepVue.model.memberConfigItem));
+                    copy.subjectId = stepVue.current.subject.id;
+                    copy.invConfig.invCount = stepVue.current.invCount;
+                    //copy.invConfig.roomMemberMap.memberList = stepVue.dataList.invConfig;
+                    stepVue.loadRoomMemberMap(copy.invConfig.roomMemberMap, stepVue.dataList.invConfig);
+                    copy.marConfig.memberList = stepVue.dataList.marConfig;
+                    //debugger;
+                    copy.studentConfig.randomStudent = stepVue.randomStudent;
+                    //copy.studentConfig.roomMemberMap.memberList = stepVue.dataList.studentConfig;
+                    stepVue.loadRoomMemberMap(copy.studentConfig.roomMemberMap, stepVue.dataList.studentConfig);
+                    //debugger;
+
+                    //stepVue.mainConfig.examId = examRegistVue.examId;
+                    stepVue.mainConfig.memberConfigList[subjectIndex] = copy;
+                    debugger;
+
+                    if (stepVue.isSameStudentConfig) {
+                        debugger;
+                        this.saveSubjectMemberConfigWithSame('studentConfig', copy);
+                    }
+                    if (stepVue.isSameInvTeacherConfig){
+                        debugger;
+                        this.saveSubjectMemberConfigWithSame('invConfig', copy);
+                    }
+                    if (stepVue.isSameMarTeacherConfig){
+                        debugger;
+                        this.saveSubjectMemberConfigWithSame('marConfig', copy);
+                    }
+
+                    //debugger;
+                }
+
+
+                stepVue.editing = this.editing ? false : true;
+                if (stepVue.editing){
+                    //debugger;
+                    //同步刷新
+                    new Promise(function (resolve, reject) {
+                        var $hidden = $(".promiseTag").toArray();
+                        var hiddenCount = 10;
+                        //debugger
+                        setTimeout(()=>{
+                            //debugger;
+                            $hidden = $(".promiseTag").toArray();
+                            if ($hidden.length >= hiddenCount){
+                                //debugger;
+                                resolve();
+                            }else{
+                                reject('failed');
+                            }
+                        }, 100)
+                    }).then(function () {
+                        //debugger;
+                        stepVue.initLayUI();
+                    }, function (err) {
+                        setTimeout(()=>{
+                            //debugger;
+                            var $hidden = $(".promiseTag").toArray();
+                            var hiddenCount = 10;
+                            if ($hidden.length >= hiddenCount){
+                                //debugger;
+                                stepVue.initLayUI();
+                            }else{
+                                layer.alert(err);
+                            }
+                        }, 100)
+
+                    })
+                }else{
+                    //清空当前数据
+                    this.reFreshData();
+                    //this.initLayUI();
+                }
+
+                //debugger;
+            },
+            reFreshData : function(){
+                this.dataList.invConfig = [];
+                this.dataList.marConfig = [];
+                this.dataList.studentConfig = [];
+                //debugger;
+
+                var newCurrent = {
+                    subject : {
+                        id : "",
+                        subjectName : "",
+                        index : 0,
+                    },
+                    invConfig : {
+                        room : {
+                            id : "",
+                            clazzName : "",
+                            index : 0,
+                        },
+                        invCount : 0,
+                        invTeacherList : [],
+                        chooseableList : [],
+                    },
+                    marConfig : {
+                        marCount : 0,
+                        marTeacherList : [],
+                        chooseableList : [],
+                    },
+                    studentConfig : {
+                        room : {
+                            id : "",
+                            clazzName : "",
+                            index : 0,
+                        },
+                        student : [],
+                        chooseableList : [],
+                    }
+                }
+                this.current = newCurrent;
+                this.current.invConfig.chooseableList = JSON.parse(JSON.stringify(stepVue.teacherList));
+                this.current.marConfig.chooseableList = JSON.parse(JSON.stringify(stepVue.teacherList));
+                this.current.studentConfig.chooseableList = JSON.parse(JSON.stringify(stepVue.studentList));
+            },
+            confirmMarTeacherConfig : function(){
+                var list = stepVue.current.marConfig.chooseableList;
+                var transferId = 'marTeacherId';
+                var transferTitle = ['可选教师', '已选教师'];
+                var model = stepVue.model.teacher;
+                var config = stepVue.dataList.marConfig;
+
+                if (!this.loadConfigDataAboutRoom(null, transferId, transferTitle, list, model, config, null, (copy, data)=>{
+                    copy.id = data.value;
+                    copy.name = data.title;
+                })){
+                    layer.alert("改卷教师不能为空!");
+                    return ;
+                }
+
+                layer.alert("设置成功!");
+                console.log(stepVue.dataList.marConfig);
+            },
+            nextRoomStudentConfig : function(){
+                var index = stepVue.current.studentConfig.room.index;
+                var transferId = 'studentConfigId';
+                var transferTitle = ['可选学生', '已选学生'];
+                var list = stepVue.current.studentConfig.chooseableList;
+                var model = stepVue.model.student;
+                var config = stepVue.dataList.studentConfig;
+                var $nextBtn = $("#nextStudentConfigBtn");
+                var $select = $("#roomSelectForStudent");
+
+                var maxSize = stepVue.roomList.length;
+                if (index == maxSize-1){
+                    if (!this.loadConfigDataAboutRoom(stepVue.current.studentConfig.room.index,
+                        transferId, transferTitle, list, model, config, $nextBtn, (copy, data)=>{
+                            copy.id = data.value;
+                            copy.name = data.title;
+                        })){
+                        layer.alert("考场学生不能为空!" + " 当前index: "+stepVue.current.studentConfig.room.index);
+                        return ;
+                    }
+                }else {
+                    if (!this.loadConfigDataAboutRoom(stepVue.current.studentConfig.room.index++,
+                        transferId, transferTitle, list, model, config, $nextBtn, (copy, data)=>{
+                            copy.id = data.value;
+                            copy.name = data.title;
+                        })){
+                        stepVue.current.studentConfig.room.index--;
+                        layer.alert("考场学生不能为空!" + " 当前index: "+stepVue.current.studentConfig.room.index);
+                        return ;
+                    }
+                }
+
+                stepVue.current.studentConfig.room.id = stepVue.roomList[stepVue.current.studentConfig.room.index].id;
+                var value = stepVue.current.studentConfig.room.id;
+                $select.val(value);
+                layui.use(['form'], function () {
+                    var form = layui.form;
+                    form.render();
+                })
+                layer.alert("设置成功!" + " 当前index: "+index + " " + stepVue.current.studentConfig.room.index);
+            },
+            nextRoomInvTeacherConfig : function(){
+                var index = stepVue.current.invConfig.room.index;
+                var transferId = 'invTeacherId';
+                var transferTitle = ['可选教师', '已选教师'];
+                var list = stepVue.current.invConfig.chooseableList;
+                var model = stepVue.model.teacher;
+                var config = stepVue.dataList.invConfig;
+                var $nextBtn = $("#nextInvConfigBtn");
+                var $select = $("#roomSelectForTeacher");
+
+                var maxSize = stepVue.roomList.length;
+                if (index == maxSize-1){
+                    if (!this.loadConfigDataAboutRoom(stepVue.current.invConfig.room.index,
+                        transferId, transferTitle, list, model, config, $nextBtn, (copy, data)=>{
+                            copy.id = data.value;
+                            copy.name = data.title;
+                        })){
+                        layer.alert("考场学生不能为空!" + " 当前index: "+stepVue.current.invConfig.room.index);
+                        return ;
+                    }
+                }else {
+                    if (!this.loadConfigDataAboutRoom(stepVue.current.invConfig.room.index++,
+                        transferId, transferTitle, list, model, config, $nextBtn, (copy, data)=>{
+                            copy.id = data.value;
+                            copy.name = data.title;
+                        })){
+                        stepVue.current.invConfig.room.index--;
+                        layer.alert("考场学生不能为空!" + " 当前index: "+stepVue.current.invConfig.room.index);
+                        return ;
+                    }
+                }
+
+                stepVue.current.invConfig.room.id = stepVue.roomList[stepVue.current.invConfig.room.index].id;
+                var value = stepVue.current.invConfig.room.id;
+                $select.val(value);
+                layui.use(['form'], function () {
+                    var form = layui.form;
+                    form.render();
+                })
+                layer.alert("设置成功!" + " 当前index: "+index + " " + stepVue.current.invConfig.room.index);
+
+                /*
+                var index = stepVue.current.invConfig.room.index;
+                debugger
+                var maxSize = stepVue.roomList.length;
+                if (index == maxSize-1){
+                    if (!this.loadInvConfigData(stepVue.current.invConfig.room.index)){
+                        layer.alert("监考教师不能为空!" + " 当前index: "+stepVue.current.invConfig.room.index);
+                        return ;
+                    }
+                }else{
+                    if (!this.loadInvConfigData(stepVue.current.invConfig.room.index++)){
+                        stepVue.current.invConfig.room.index--;
+                        layer.alert("监考教师不能为空!" + " 当前index: "+stepVue.current.invConfig.room.index);
+                        return ;
+                    }
+                }
+                stepVue.current.invConfig.room.id = stepVue.roomList[stepVue.current.invConfig.room.index].id;
+                var value = stepVue.current.invConfig.room.id
+                $("#roomSelectForTeacher").val(value);
+                layui.use(['form'], function () {
+                    var form = layui.form;
+                    form.render();
+
+
+                })
+                layer.alert("设置成功!" + " 当前index: "+index + " " + stepVue.current.invConfig.room.index);
+                debugger;
+
+                 */
+            },
+            loadConfigDataAboutRoom : function(index, transferId, transferTitle, list, model, config, $nextBtn, callBack){
+                //var transferId= 'studentConfigId';
+                var transferData = this.getTransferData(transferId);
+                debugger;
+                console.log(transferData.length)
+
+                if (transferData.length==0){
+                    debugger;
+                    return false;
+                }
+
+                //var list = this.studentList;
+                for (var i=list.length-1; i>=0;i--){
+                    for (var j=transferData.length-1; j>=0; j--){
+                        if (transferData[j].value==list[i].value){
+                            list.splice(i, 1);
+                            break;
+                        }
+                    }
+                    /*
+                    transferData.forEach((e)=>{
+                        debugger;
+                        if (e.value==list[i].value){
+                            list.splice(i, 1);
+                            debugger;
+                            return ;
+                        }
+                    })
+
+                     */
+                }
+
+                this.reloadTransfer2(transferId, list, transferTitle);
+                debugger
+                var resList = this.loadData(model, transferData, callBack);
+                debugger;
+
+                if (index==null||$nextBtn==null){
+                    config = resList;
+                    stepVue.dataList.marConfig = resList;
+                    debugger;
+                    return true;
+                }
+                config[index] = resList;
+                this.updateupdateNextBtnText2(index, stepVue.roomList.length, $nextBtn);
+
+                return true;
+            },
+            /*
+            loadInvConfigData : function(index){
+                var transferId = 'invTeacherId';
+                var transferData = this.getTransferData(transferId);
+                if (transferData.length==0){
+                    return false;
+                }
+
+                var teacherList = this.teacherList;
+                for (var i=teacherList.length-1; i>=0; i--){
+                    transferData.forEach((e)=>{
+                        if (e.value==teacherList[i].value){
+                            teacherList.splice(i, 1);
+                            return ;
+                        }
+                    })
+                }
+                this.reloadTransfer(transferId);
+                //this.reloadTransfer2(transferId, teacherList, ['可选教师', '已选教师']);
+                var model = stepVue.model.teacher;
+                var invTeacherList = this.loadData(model, transferData, (copy, data)=>{
+                    copy.id = data.value;
+                    copy.name = data.title;
+                })
+
+                stepVue.dataList.invConfig[index] = invTeacherList;
+                //stepVue.dataList.invConfig.push(invTeacherList);
+                console.log(stepVue.dataList.invConfig);
+                this.updateNextBtnText(index);
+
+                return true;
+            },
+             */
+            updateupdateNextBtnText2 : function(index, maxSize, $nextBtn){
+                if (index == maxSize-1){
+                    $nextBtn.attr("disabled", "disabled");
+                    $nextBtn.text("到底了");
+                }else{
+                    $nextBtn.removeAttr("disabled");
+
+                    if (index+1 == maxSize-1){
+                        $nextBtn.text("保存");
+                    }else{
+                        $nextBtn.text("确认并下一个");
+                    }
+                }
+            },
+            /*
+            updateNextBtnText : function(index){
+                if (index == stepVue.roomList.length-1){
+                    $("#nextInvConfigBtn").attr("disabled", "disabled");
+                    $("#nextInvConfigBtn").text("到底了");
+                }else{
+                    $("#nextInvConfigBtn").removeAttr("disabled");
+
+                    if (index+1 == stepVue.roomList.length-1){
+                        $("#nextInvConfigBtn").text("保存");
+                    }else{
+                        $("#nextInvConfigBtn").text("确认并下一个");
+                    }
+                }
+
+            },
+             */
+            loadData : function(model, dataList, callBack){
+                var res = [];
+                if (dataList.length==0){
+                    return res;
+                }
+                dataList.forEach((e)=>{
+                    var copy = JSON.parse(JSON.stringify(model));
+                    callBack(copy, e);
+                    res.push(copy);
+                    //debugger;
+                })
+
+                return res;
+            },
+            getTransferData : function(transferId){
+                var res = null
+                layui.use('transfer', function () {
+                    var transfer = layui.transfer;
+                    var getData = transfer.getData(transferId);
+                    res = getData;
+                    debugger;
+                })
+
+                return res;
+            },
+            reloadTransfer2 : function(transferId, list, title){
+                console.log(list);
+
+                layui.use('transfer', function () {
+                    var transfer = layui.transfer;
+                    //debugger;
+
+                    transfer.reload(transferId, {
+                        title : title,
+                        value: [],
+                        data : list,
+                        showSearch: true,
+                    });
+                    //form.render();
+                })
+            },
+            /*
+            reloadTransfer : function(transferId){
+                layui.use('transfer', function () {
+                    var transfer = layui.transfer;
+                    var teacherList = stepVue.teacherList;
+                    //debugger;
+
+                    transfer.reload(transferId, {
+                        title : ['可选学生', '已选学生'],
+                        value: [],
+                        data : teacherList,
+                        showSearch: true,
+                    });
+                    //form.render();
+                })
+            },
+             */
+            getRoomIndex : function(roomId){
+                var roomList = stepVue.roomList;
+                for (var i=0; i<roomList.length; i++){
+                    if (roomList[i].id==roomId){
+                        return i;
+                    }
+                }
+
+                return -1;
+            },
+            getRoomList : function(){
+                var examId = examRegistVue.examId;
+                if (examId==""){
+                    layer.msg("缺少考试对象", {icon : 5});
+                    return null;
+                }
+                $.ajax({
+                    url : "${ctxPath}/happy-study/exam/list/room/"+examId,
+                    type : "get",
+                    async : false,
+                    success : response=>{
+                        this.roomList = response.resData;
+                        var roomIndexMap = this.roomIndexMap;
+                        var roomList = this.roomList;
+                        for (var i=0; i<roomList.length; i++){
+                            var room = roomList[i];
+                            roomIndexMap[room.id] = i;
+                        }
+
+                    }
+                })
+            },
+            getCheckedSubjectList : function () {
+                var examId = examRegistVue.examId;
+                if (examId==""){
+                    layer.msg("缺少考试对象", {icon : 5});
+                    return null;
+                }
+                $.ajax({
+                    url : "${ctxPath}/happy-study/exam/list/subject/"+examId,
+                    type : "get",
+                    async : false,
+                    success : response=>{
+                        var subjectList = response.resData;
+                        this.subjectList = subjectList;
+                        var subjectIndexMap = this.subjectIndexMap;
+                        var subjectList = this.subjectList;
+                        for (var i=0; i<subjectList.length; i++){
+                            var subject = subjectList[i];
+                            subjectIndexMap[subject.id] = i;
+                        }
+                    }
+                })
+            },
+            getTeacherList : function(){
+                var examId = examRegistVue.examId;
+                if (examId==""){
+                    layer.msg("缺少考试对象", {icon : 5});
+                    return null;
+                }
+                //TODO: 是否可以让其他年级的老师监考或改卷，是的话exam置空
+                $.ajax({
+                    url : "${ctxPath}/happy-study/exam/list/teacher/"+examId,
+                    type : "get",
+                    async : false,
+                    success : response=>{
+                        var teacherList = response.resData;
+                        teacherList.forEach(e=>{
+                            var model = {
+                                title : "",
+                                value : "",
+                            }
+                            model.title = e.name;
+                            model.value = e.id;
+                            this.teacherList.push(model);
+                        })
+                        teacherList = this.teacherList;
+
+                        this.current.invConfig.chooseableList = JSON.parse(JSON.stringify(teacherList));
+                        this.current.marConfig.chooseableList = JSON.parse(JSON.stringify(teacherList));
+                    }
+                })
+            },
+            getStudentList : function(){
+                var examId = examRegistVue.examId;
+                if (examId==""){
+                    layer.msg("缺少考试对象", {icon : 5});
+                    return null;
+                }
+                $.ajax({
+                    url : "${ctxPath}/happy-study/exam/list/student/"+examId,
+                    type : "get",
+                    async : false,
+                    success : response=>{
+                        var studentList = response.resData;
+                        studentList.forEach(e=>{
+                            var model = {
+                                title : "",
+                                value : "",
+                            }
+                            model.title = e.name;
+                            model.value = e.id;
+                            //debugger
+                            this.studentList.push(model);
+                        })
+                        studentList = this.studentList;
+
+                        this.current.studentConfig.chooseableList = JSON.parse(JSON.stringify(studentList));
+                        console.log(studentList)
+                        debugger;
+                    }
+                })
+
+
+            },
+            initLayUI : function () {
+
+                layui.use(['form', 'layedit', 'laydate'], function () {
+                    var form = layui.form
+                        ,layer = layui.layer
+                        ,layedit = layui.layedit
+                        ,laydate = layui.laydate;
+
+                    form.on('switch(sameStudentConfig)', function (data) {
+                        stepVue.isSameStudentConfig = stepVue.isSameStudentConfig ? false : true;
+                        var char = stepVue.isSameStudentConfig ? "开启" : "关闭";
+                        layer.msg("一键配置学生: 已"+char, {
+                            offset: '6px'
+                        });
+                        layer.tips('温馨提示：一键配置学生可以使所有学生使用相同的配置', data.othis);
+                        console.log(stepVue.isSameStudentConfig);
+                    })
+                    form.on('switch(sameInvTeacherConfig)', function (data) {
+                        stepVue.isSameInvTeacherConfig = stepVue.isSameInvTeacherConfig ? false : true;
+                        var char = stepVue.isSameStudentConfig ? "开启" : "关闭";
+                        layer.msg("一键配置监考教师: 已"+char, {
+                            offset: '6px'
+                        });
+                        layer.tips('温馨提示：一键配置学生可以使所有学生使用相同的配置', data.othis);
+                        console.log(stepVue.isSameInvTeacherConfig);
+                    })
+                    form.on('switch(sameMarTeacherConfig)', function (data) {
+                        stepVue.isSameMarTeacherConfig = stepVue.isSameMarTeacherConfig ? false : true;
+                        var char = stepVue.isSameStudentConfig ? "开启" : "关闭";
+                        layer.msg("一键配置改卷教师: 已"+char, {
+                            offset: '6px'
+                        });
+                        layer.tips('温馨提示：一键配置学生可以使所有学生使用相同的配置', data.othis);
+                        console.log(stepVue.isSameMarTeacherConfig);
+                    })
+                    form.on('switch(randomStudent)', function(data){
+                        stepVue.randomStudent = stepVue.randomStudent ? false : true;
+                        var char = stepVue.isSameStudentConfig ? "开启" : "关闭";
+                        layer.msg("随机分配考生考室: 已"+char, {
+                            offset: '6px'
+                        });
+                        layer.tips('温馨提示：随机分配考室将解放你的双手，由系统来自动配置！', data.othis);
+                    })
+
+                    form.on('select(subjectSelect)', function (data) {
+                        stepVue.current.subject.id = data.value;
+                        stepVue.current.subject.index = stepVue.subjectIndexMap[data.value];
+                    })
+                    form.on('select(invTeacherCountPerRoomSelect)', function (data) {
+                        stepVue.current.invConfig.invCount = data.value;
+                    })
+                    form.on('select(roomSelectForTeacher)', function (data) {
+                        stepVue.current.invConfig.room.id = data.value;
+                        stepVue.current.invConfig.room.index = stepVue.roomIndexMap[data.value];
+                        //debugger;
+                    })
+                    form.on('select(roomSelectForStudent)', function (data) {
+                        stepVue.current.studentConfig.room.id = data.value;
+                        stepVue.current.studentConfig.room.index = stepVue.roomIndexMap[data.value];
+                    })
+
+                    function getRoomIndex(roomId){
+                        var roomList = stepVue.roomList;
+                        for (var i=0; i<roomList.length; i++){
+                            if (roomList[i].id==roomId){
+                                return i;
+                            }
+                        }
+
+                        return -1;
+                    }
+
+                    debugger;
+                    form.render();
+                })
+                layui.use(['transfer', 'layer', 'util'], function () {
+                    var $ = layui.$
+                        ,transfer = layui.transfer
+                        ,layer = layui.layer
+                        ,util = layui.util;
+
+                    //模拟数据
+                    var data1 = [
+                        {"value": "1", "title": "李白"}
+                        ,{"value": "2", "title": "杜甫"}
+                        ,{"value": "3", "title": "苏轼"}
+                        ,{"value": "4", "title": "李清照"}
+                        ,{"value": "5", "title": "鲁迅", "disabled": true}
+                        ,{"value": "6", "title": "巴金"}
+                        ,{"value": "7", "title": "冰心"}
+                        ,{"value": "8", "title": "矛盾"}
+                        ,{"value": "9", "title": "贤心"}
+                    ]
+
+                    var marTeacherList = stepVue.current.marConfig.chooseableList;
+                    var invTeacherList = stepVue.current.invConfig.chooseableList;
+                    var studentList = stepVue.current.studentConfig.chooseableList;
+                    debugger;
+
+                    //基础效果
+                    transfer.render({
+                        elem: '#invTeacherConfig'
+                        ,data: invTeacherList
+                        ,id: 'invTeacherId' //定义唯一索引
+                        ,title: ['可选教师', '监考教师']
+                        ,showSearch: true
+                        //穿梭时的回调
+                        ,onchange: function(obj, index){
+                            //layer.alert('数据：'+ JSON.stringify(obj));
+                            //var arr = ['左边', '右边'];
+                            //layer.alert('来自 <strong>'+ arr[index] + '</strong> 的数据：'+ JSON.stringify(obj)); //获得被穿梭时的数据
+                        }
+                    })
+
+                    //基础效果
+                    transfer.render({
+                        elem: '#marTeacherConfig'
+                        ,data: marTeacherList
+                        ,id: 'marTeacherId' //定义唯一索引
+                        ,title: ['可选教师', '改卷教师']
+                        ,showSearch: true
+                        //穿梭时的回调
+                        ,onchange: function(obj, index){
+                            //layer.alert('数据：'+ JSON.stringify(obj));
+                            //var arr = ['左边', '右边'];
+                            //layer.alert('来自 <strong>'+ arr[index] + '</strong> 的数据：'+ JSON.stringify(obj)); //获得被穿梭时的数据
+                        }
+                    })
+
+                    //基础效果
+                    transfer.render({
+                        elem: '#studentRoomConfig'
+                        ,data: studentList
+                        ,id: 'studentConfigId' //定义唯一索引
+                        ,title: ['剩余学生', '当前考室学生']
+                        ,showSearch: true
+                        //穿梭时的回调
+                        ,onchange: function(obj, index){
+                            var len = obj.length;
+                            var maxSize = stepVue.maxSize
+                            //debugger;
+                            //TODO: 有问题 不能获取穿梭的数据
+                            if (index==0 && obj.length > stepVue.maxSize){
+                                layer.msg("超出考室最大容纳人数");
+                                reloadTransfer('studentConfigId');
+                                //debugger;
+                            }
+
+                            //layer.alert(JSON.stringify(getData('studentConfigId')));
+                            //layer.alert('数据：'+ JSON.stringify(obj));
+                            //layer.alert(JSON.stringify(obj)); //获得被穿梭时的数据
+                            //var arr = ['左边', '右边'];
+                            //layer.alert('来自 <strong>'+ arr[index] + '</strong> 的数据：'+ JSON.stringify(obj)); //获得被穿梭时的数据
+                        }
+                    })
+
+
+                    function getData(transferId) {
+                        var getData = transfer.getData(transferId);
+                        //layer.alert(JSON.stringify(getData));
+                        return getData
+                    }
+                    function reloadTransfer(transferId) {
+                        transfer.reload(transferId, {
+                            title : ['可选学生', '已选学生'],
+                            value: [],
+                            showSearch: true,
+                        });
+                        //form.render();
+                    }
+
+
+                })
+            }
+        },
+        mounted : function(){
+            this.getCheckedSubjectList();
+            this.getRoomList();
+            this.getTeacherList();
+            this.getStudentList();
+            this.$nextTick(function () {
+                this.initLayUI();
+            })
+        },
+
+
+    })
+
+
+
+
+
+
+
+</script>

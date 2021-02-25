@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>用户登录</title>
+    <link rel="stylesheet" href="${ctxPath}/css/login/login.css" />
+    <script type="text/javascript" src="${ctxPath}/frame/jquery/jquery-3.4.1.js"></script>
+    <!-- vue -->
+    <script type="text/javascript" src="${ctxPath}/frame/vue/vue.min.js"></script>
+    <!-- anime -->
+    <script type="text/javascript" src="${ctxPath}/frame/anime/anime.min.js"></script>
+</head>
+<body style="background: url('${ctxPath}/img/background/bg4.jpg') fixed center center no-repeat;">
+<div class="login" id="outter">
+    <div class="inner" id="loginPane">
+        <h1 style="color: #fff;margin-bottom: 15px" id="title">HappyStudy2.0</h1>
+        <h2>用户登录</h2>
+        <div class="login_box" id="usernamePane">
+            <!-- required就是不能为空 必须在css效果中有很大的作用 -->
+            <!-- 可以简写为required -->
+            <input type="text" required v-model="login.username" id="username" /><label>用户名</label>
+        </div>
+        <div class="login_box" id="passwordPane">
+            <input type="password" required="required" v-model="login.password" id="password" /><label>密码</label>
+        </div>
+        <a href="javascript:void(0)" class="lighting" @click="submit()">
+            登录
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </a>
+        <a href="javascript:void(0)" class="lighting" @click="toRegist()">
+            注册
+
+        </a>
+        <div style="">
+            <a href="javascript:void(0)" class="common-a">
+                联系我们
+
+            </a>
+            <a href="javascript:void(0)" class="common-a">
+                修改密码
+
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
+<script>
+    var loginVue = new Vue({
+        el : "#outter",
+        data : {
+            login : {
+                username : "",
+                password : "",
+            },
+            anime : {
+                changeForm : null,
+                title : null,
+            },
+            url : {
+                regist : "${ctxPath}/regist",
+                updatePass : "${ctxPath}/updater",
+                home : "${ctxPath}/happy-study/home"
+            }
+        },
+        methods : {
+            loadingNode : function(url, callback){
+                //debugger;
+
+                $("#outter").empty();
+                //$("#outter").html("loading");
+                //debugger;
+                $("#outter").load(url, {}, function () {
+
+                });
+            },
+            toRegist : function(){
+                var url = this.url.regist
+                //debugger;
+                //this.changeAnime();
+                this.loadingNode(url, ()=>{});
+            },
+            setSuccess : function($input){
+                $input.find("input").addClass("input_success");
+                $input.find("label").addClass("label_success");
+            },
+            setError : function($input){
+                $input.find("input").addClass("input_error");
+                $input.find("label").addClass("label_error");
+            },
+            submit : function () {
+                var username = this.login.username;
+                var password = this.login.password;
+
+                var dataParam = {
+                    username : username,
+                    password : password,
+                }
+                $.ajax({
+                    url : "${ctxPath}/do/login",
+                    type : "post",
+                    async : false,
+                    data : JSON.stringify(dataParam),
+                    contentType : "application/json;charset=utf-8",
+                    success : response=>{
+                        //debugger;
+                        var res = response.resData[0];
+                        debugger
+                        if (response.state==1){
+                            if (res.success){
+                                this.setSuccess($("#usernamePane"));
+                                this.setSuccess($("#passwordPane"));
+                                var home = this.url.home;
+                                setTimeout(()=>{
+                                    debugger;
+                                    window.location.href=home;
+                                }, 100)
+                            }else {
+                                alert(response.description);
+                                this.setError($("#usernamePane"));
+                                this.setError($("#passwordPane"));
+                            }
+
+                        }else if (response.state==0){
+                            alert("后台错误")
+                            this.setError($("#usernamePane"));
+                            this.setError($("#passwordPane"));
+                        }else {
+                            alert("error");
+                        }
+                    }
+                })
+            },
+            changeAnime : function () {
+                if (this.anime.changeForm==null){
+                    this.anime.changeForm = anime({
+                        targets : '#loginPane',
+                        scale : [
+                            {value: .1, easing: 'easeOutSine', duration: 500},
+                            {value: 1, easing: 'easeInOutQuad', duration: 1200}
+                        ],
+                        delay : anime.stagger(10, {grid: [14, 5], from:'center'})
+                    })
+                }else{
+                    this.anime.changeForm.play();
+                }
+
+            },
+            initTitleAnime : function () {
+
+            }
+        },
+        mounted : function () {
+            this.$nextTick(function () {
+                this.initTitleAnime();
+            })
+
+        }
+    })
+</script>

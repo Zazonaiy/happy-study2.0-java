@@ -1,0 +1,257 @@
+<link rel="stylesheet" href="${ctxPath}/css/man.css">
+
+<style>
+    #process-head .processNode a {
+        text-decoration: none;
+        color: #3c3c3c;
+    }
+    .processNode a:hover{
+        font-size: 26px;
+        color: #95999c;
+    }
+
+    .showWindow-item {
+        height: 55px;
+        font-size: 22px;
+    }
+    .showWindow-item:hover {
+        background: #0c5460;
+        color: whitesmoke;
+        cursor: pointer;
+    }
+
+</style>
+
+<div id="exam-regist" class="container-fluid man-container">
+    <!-- 头部进度条 -->
+    <fieldset class="layui-elem-field" id="process-head">
+        <legend>当前进度</legend>
+        <div class="layui-field-box">
+            <div class="layui-progress" lay-showPercent="true" lay-filter="demo">
+                <div class="layui-progress-bar layui-bg-red" lay-percent="0%"></div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-md2 processNode">
+                    <i :class="{'bi bi-circle': index<0, 'bi bi-circle-half':index==0, 'bi bi-check-circle':index>0}" style="font-size: 30px;"></i>
+                    <button @click="setThePercentAndLoadData(0, 'jump')" class="site-demo-active btn btn-outline-dark"
+                            data-type="setPercent" style="outline: none;border-color: white;box-shadow:none;"> 基本信息</button>
+                </div>
+                <div class="layui-col-md2 processNode" style="text-align: center;">
+                    <i :class="{'bi bi-circle': index<1, 'bi bi-circle-half':index==1, 'bi bi-check-circle':index>1}" style="font-size: 30px;"></i>
+                    <button :disabled="maxIndex<1" @click="setThePercentAndLoadData(1, 'jump')" class="site-demo-active btn btn-outline-dark"
+                            data-type="setPercent" style="outline: none;border-color: white;box-shadow:none;"> 考场配置</button>
+                </div>
+                <div class="layui-col-md2 processNode" style="text-align: center;">
+                    <i :class="{'bi bi-circle': index<2, 'bi bi-circle-half':index==2, 'bi bi-check-circle':index>2}" style="font-size: 30px;"></i>
+                    <button :disabled="maxIndex<2" @click="setThePercentAndLoadData(2, 'jump')" class="site-demo-active btn btn-outline-dark"
+                            data-type="setPercent" style="outline: none;border-color: white;box-shadow:none;"> 科目配置</button>
+                </div>
+                <div class="layui-col-md2 processNode" style="text-align: center;">
+                    <i :class="{'bi bi-circle': index<3, 'bi bi-circle-half':index==3, 'bi bi-check-circle':index>3}" style="font-size: 30px;"></i>
+                    <button :disabled="maxIndex<3" @click="setThePercentAndLoadData(3, 'jump')" class="site-demo-active btn btn-outline-dark"
+                            data-type="setPercent" style="outline: none;border-color: white;box-shadow:none;"> 人员配置</button>
+                </div>
+                <div class="layui-col-md2 processNode" style="text-align: center;">
+                    <i :class="{'bi bi-circle': index<4, 'bi bi-circle-half':index==4, 'bi bi-check-circle':index>4}" style="font-size: 30px;"></i>
+                    <button :disabled="maxIndex<4" @click="setThePercentAndLoadData(4, 'jump')" class="site-demo-active btn btn-outline-dark"
+                            data-type="setPercent" style="outline: none;border-color: white;box-shadow:none;"> 创建任务</button>
+                </div>
+                <div class="layui-col-md2 processNode" style="float: right; text-align: right">
+                    <i :class="{'bi bi-circle': index<5, 'bi bi-check-circle-fill':index>=5}" style="font-size: 30px;"></i>
+                    <button :disabled="maxIndex<5" @click="setThePercentAndLoadData(5, 'jump')" class="site-demo-active btn btn-outline-dark"
+                            data-type="setPercent" style="outline: none;border-color: white;box-shadow:none;"> 创建完成</button>
+                </div>
+            </div>
+            <div class="layui-progress" lay-filter="demo" style="margin-top: 6px;">
+                <div class="layui-progress-bar layui-bg-red" lay-percent="0%"></div>
+            </div>
+        </div>
+    </fieldset>
+
+    <blockquote class="layui-elem-quote layui-quote-nm">
+        <div style="height: 500px;" class="d-flex flex-row" id="process-body">
+
+        </div>
+    </blockquote>
+
+    <!-- 控制按钮 -->
+    <div>
+        <div class="site-demo-button" style="margin-top: 20px; margin-bottom: 0;">
+            <button :disabled="index==0" class="layui-btn site-demo-active" data-type="setPercent" @click="setThePercentAndLoadData(--index, 'prev')">上一步</button>
+            <button :disabled="index==5" class="layui-btn site-demo-active" data-type="setPercent" @click="setThePercentAndLoadData(++index, 'next')">{{nextBtnText}}</button>
+        </div>
+
+    </div>
+    <!-- content -->
+
+</div>
+
+<script>
+    var examRegistVue = new Vue({
+        el : "#exam-regist",
+        data : {
+            percent : '0%',
+            percentList : ['0%', '25%', '43%', '58%', '75%', '100%'],
+            urlList : [
+                "${ctxPath}/happy-study/exam/regist/baseinfo",
+                "${ctxPath}/happy-study/exam/regist/room",
+                "${ctxPath}/happy-study/exam/regist/subject",
+                "${ctxPath}/happy-study/exam/regist/member",
+                "${ctxPath}/happy-study/exam/regist/task",
+            ],
+            index : 0,
+            maxIndex : 0,
+            nextBtnText : "下一步",
+            examId : "",
+            submitDataFirst : {
+                name : "",
+                semesterId : "",
+                gradeId : "",
+                examType : -1,
+                beginDate : "",
+                endDate : "",
+                remark : "",
+                examRegistRoom : {
+                    useOurGradeRoom : null,
+                    rentTag : null,
+                    differentPlaceTag : false,
+                    maxSize : -1,
+                    rentGradeId : "",
+                    rentRemark : "",
+                    differentPlaceRemark : "",
+                    useVirtualRoomNo : null,
+                },
+                subjectList : [],
+            },
+            submitDataSecond : {
+                examId : "",
+                memberConfigList: []
+            }
+        },
+        methods : {
+            loadData : function(index){
+                stepVue.saveData();
+            },
+            doSubmit : function(stepUrl, dataParam){
+                //var dataParam = examRegistVue.submitDataFirst;
+                var res = true;
+                debugger;
+                $.ajax({
+                    url : "${ctxPath}/happy-study/exam/regist/"+stepUrl,
+                    type : "post",
+                    data : JSON.stringify(dataParam),
+                    contentType : "application/json;charset=utf-8",
+                    async : false,
+                    success : response=>{
+                        if (response.state==0){
+                            layer.msg(response.description, {icon : 5});
+                            res = false;
+                            return false;
+                        }
+                        if (response.state==1){
+                            layer.msg(response.description, {icon : 3});
+                            if (stepUrl=='firstStep'){
+                                this.examId = response.resData[0].id;
+                                debugger;
+                            }
+                            return true;
+                        }
+                        if (response.state==2){
+                            layer.msg(response.description, {icon : 3});
+                            if (stepUrl=='firstStep'){
+                                this.examId = response.resData[0].id;
+                                debugger;
+                            }
+                            return true;
+                        }
+
+                        layer.msg("后台交互错误!");
+                        res = false;
+                        return false;
+                    },
+                    error : ()=>{
+                        layer.msg("请求失败", {icon : 5});
+                        res = false;
+                        return false
+                    }
+
+                })
+                return res;
+            },
+            loadingNode : function () {
+                var index = this.index;
+                var url = this.urlList[index];
+                var loading = vue.loadingFont;
+                $("#process-body").empty();
+                $("#process-body").html(loading);
+                //debugger;
+                $("#process-body").load(url, {}, function () {
+
+                });
+            },
+            setThePercentWithoutLoadData : function(index){
+                examRegistVue.setThePercent(index);
+            },
+            setThePercentAndLoadData : function(index, isNext){
+                var res = stepVue.saveData();
+                if (!res){
+                    if (isNext=='next'){
+                        this.index--;
+                    }else if (isNext=='prev'){
+                        this.index++;
+                    }else if (isNext=='jump'){
+
+                    }
+                    debugger
+                    return ;
+                }
+                examRegistVue.setThePercent(index);
+            },
+            setThePercent : function (index) {
+                console.log(index);
+                if (index==4){
+                    this.nextBtnText="保存"
+                }else{
+                    this.nextBtnText="下一步"
+                }
+                this.percent = this.percentList[index];
+                this.index = index;
+                debugger
+                if (this.index>this.maxIndex){
+                    this.maxIndex = this.index;
+                }
+                this.loadingNode();
+            },
+            initProcessHead : function () {
+                layui.use('element', function () {
+                    var element = layui.element,
+                        $ = layui.jquery;
+                    element.render();
+
+                    var active = {
+                        setPercent: function(){
+                            //设置50%进度
+                            var percent = examRegistVue.percent;
+                            element.progress('demo', percent)
+                        }
+
+                    };
+
+                    $('.site-demo-active').on('click', function(){
+                        var othis = $(this), type = $(this).data('type');
+                        active[type] ? active[type].call(this, othis) : '';
+                    });
+                })
+            }
+        },
+        mounted : function () {
+            //this.initIView();
+            this.initProcessHead();
+            this.loadingNode();
+            $('[data-toggle="tooltip"]').tooltip()
+        }
+    })
+
+
+</script>
+

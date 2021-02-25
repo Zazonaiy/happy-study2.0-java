@@ -1,0 +1,257 @@
+<style>
+    .boxItem {
+        width: 100%;
+        height: 100%;
+    }
+    .showWindow-item {
+        height: 55px;
+        font-size: 22px;
+    }
+    .showWindow-item:hover {
+        background: #0c5460;
+        color: whitesmoke;
+        cursor: pointer;
+    }
+</style>
+
+<div  style="width: 100%; height: 100%;" class="d-flex flex-row" id="step-1">
+    <!-- left -->
+    <div class="boxItem layui-form layui-anim layui-anim-fadein" style="padding-right: 1%;">
+        <div class="layui-form-item" style="padding-left: 15px;padding-right: 15px;">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">@</span>
+                </div>
+                <input type="text" class="form-control" placeholder="考试名称" aria-label="考试名称" aria-describedby="basic-addon1"
+                    v-model="name">
+            </div>
+        </div>
+        <div class="layui-form-item" style="padding-left: 15px;padding-right: 15px; padding-top: 10px;">
+            <div class="layui-inline">
+                <label class="layui-form-label" style="padding-left: 0px;">选择学期</label>
+                <div class="layui-input-inline">
+                    <select name="gradeId" lay-verify="required" lay-search="" id="semesterSelect" lay-filter="semesterSelect">
+                        <option value="">选择学期</option>
+                        <option v-for="semester in semesterList" :value="semester.value">{{semester.name}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label" style="padding-left: 0px;">选择年级</label>
+                <div class="layui-input-inline">
+                    <select name="gradeId" lay-verify="required" lay-search="" id="gradeSelect" lay-filter="gradeSelect">
+                        <option value="">选择年级</option>
+                        <option v-for="grade in gradeList" :value="grade.id">{{grade.gradeName}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item" style="padding-left: 15px;padding-right: 15px;">
+            <label class="layui-form-label" style="padding-left: 0px;">选择年级</label>
+            <div class="layui-input-block">
+                <input type="radio" name="examType" value="1" title="周考" lay-filter="examTypeBox">
+                <input type="radio" name="examType" value="2" title="月考" checked lay-filter="examTypeBox">
+                <input type="radio" name="examType" value="3" title="半期考试" lay-filter="examTypeBox">
+                <input type="radio" name="examType" value="3" title="期末考试" lay-filter="examTypeBox">
+            </div>
+        </div>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend>考试时间</legend>
+        </fieldset>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label" style="width: 100px;">开始日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="beginTime" id="beginTime" required lay-verify="date|required"
+                           placeholder="该年级入学时间" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline" style="float: right;">
+                <label class="layui-form-label" style="width: 100px;">结束日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="endTime" id="endTime" required lay-verify="date|required"
+                           placeholder="该年级毕业时间" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;margin-bottom: 30px;">
+            <legend>关于考试</legend>
+        </fieldset>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block" style="width: 83%;">
+                <textarea name="remark" placeholder="请输入内容" class="layui-textarea" v-model="remark"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- right -->
+    <div class="boxItem d-flex flex-column" style="background: rgba(255,248,220,0.9); padding: 1% 1% 1% 1%;">
+        <div class="boxItem" style="background: rgba(64,224,208,0.9);">
+            <div style="width: 100%; height: 70%;" class="d-flex flex-column">
+                <div v-for="creatingExam in creatingExamList" class="showWindow-item d-flex flex-row">
+                    <div class="flex-fill text-center">
+                        <p style="margin-top: 14px; padding: 0px;">{{creatingExam.eno}}</p>
+                    </div>
+                    <div class="flex-fill text-center" style="vertical-align: center;">
+                        <p style="margin-top: 14px; padding: 0px;">{{creatingExam.name}}</p>
+                    </div>
+                    <div class="flex-fill text-center">
+                        <p style="margin-top: 14px; padding: 0px;">{{creatingExam.examState}}</p>
+                    </div>
+                    <div class="flex-fill text-center">
+                        <p style="margin-top: 14px; padding: 0px;">{{creatingExam.lastModifyTime}}</p>
+                    </div>
+                    <div class="flex-fill text-center">
+                        <p style="margin-top: 14px; padding: 0px;">创建者</p>
+                    </div>
+                    <div class="flex-fill text-center">
+                        <button type="button" class="btn btn-dark" style="margin-top: 8px;" @click="continueCreating(creatingExam.id, creatingExam.stepCount)">继续</button>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex bd-highlight" style="width: 100%; height: 30%; background: rgba(0,0,0,0.6)">
+                <div class="p-2 flex-grow-1 bd-highlight d-flex flex-column">
+                    <div class="d-flex align-items-center" style="width: 100%; flex: 1;">
+                        <h1 class="display-1" style="color: whitesmoke; font-size: 40px;">创建中的考试</h1>
+                    </div>
+                    <div class="d-flex align-items-center" style="width: 100%; flex: 1;">
+                        <input type="text" class="form-control" placeholder="可以搜索所有的考试历史" aria-label="exam-history">
+                    </div>
+                </div>
+                <div class="p-2 bd-highlight d-flex align-items-center" style="width: 30%; padding-left: 9%; padding-right: 3%;">
+                    <button type="button" class="btn btn-dark btn-lg" style="height: 90%; width: 100%; font-size: 32px;"><i class="bi bi-search" style="font-size: 40px;"></i>&nbsp;&nbsp;搜索</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    var stepVue = new Vue({
+        el : "#step-1",
+        data : {
+            semesterList : null,
+            gradeList : null,
+            creatingExamList : null,
+            name : "",
+            semesterId : "",
+            examType : 2,
+            gradeId : "",
+            beginTime : "",
+            endTime : "",
+            remark : "",
+        },
+        methods : {
+            saveData : function () {
+                //alert("!");
+                if (stepVue.name==""||stepVue.semesterId==""||stepVue.gradeId==""||stepVue.beginTime==""||stepVue.endTime==""){
+                    //layer.msg("信息不能为空", {icon: 3});
+                    //return false;
+                }
+                if (stepVue.examType==undefined || stepVue.examType == null){
+                    //layer.msg("信息不能为空", {icon: 3});
+                    //return false;
+                }
+                examRegistVue.submitDataFirst.name = stepVue.name;
+                examRegistVue.submitDataFirst.semesterId = stepVue.semesterId;
+                examRegistVue.submitDataFirst.gradeId = stepVue.gradeId;
+                examRegistVue.submitDataFirst.examType = stepVue.examType;
+                examRegistVue.submitDataFirst.beginDate = stepVue.beginTime;
+                examRegistVue.submitDataFirst.endDate = stepVue.endTime;
+                examRegistVue.submitDataFirst.remark = stepVue.remark;
+
+                //debugger
+
+                return true;
+            },
+            continueCreating : function(examId, stepCount){
+                if (examId==""){
+                    return ;
+                }
+                examRegistVue.examId = examId;
+                examRegistVue.setThePercentAndLoadData(stepCount, 'jump');
+            },
+            getSemesterList : function(){
+                $.ajax({
+                    url : "${ctxPath}/happy-study/semesterMan/list/all",
+                    type : 'get',
+                    async : false,
+                    success : response=>{
+                        var resData = response.resData;
+                        this.semesterList = resData;
+                        //debugger
+                    }
+                })
+            },
+            getGradeList : function () {
+                $.ajax({
+                    url : "${ctxPath}/happy-study/studentMan/editdata/baseinfo/add",
+                    type : 'get',
+                    async : false,
+                    success : response=>{
+                        var resData = response.resData
+                        this.gradeList = resData[0].gradeList;
+                        console.log(this.gradeList);
+                        //debugger
+                    }
+                })
+            },
+            getCreatingExam : function (gradeId) {
+                $.get("${ctxPath}/happy-study/exam/list/byState/creating/"+gradeId, {}, response=>{
+                    stepVue.creatingExamList = response.resData;
+                    //debugger;
+                })
+            }
+        },
+        mounted : function () {
+            this.getGradeList();
+            this.getSemesterList();
+
+            layui.use(['form', 'layedit', 'laydate'], function () {
+                var form = layui.form
+                    ,layer = layui.layer
+                    ,layedit = layui.layedit
+                    ,laydate = layui.laydate;
+
+                form.on('radio(examTypeBox)', function (data) {
+                    stepVue.examType = data.value;
+                })
+
+                //入学/毕业日期
+                laydate.render({
+                    elem : "#beginTime",
+                    trigger : "click",
+                    done : function (value, date, endDate) {
+                        stepVue.beginTime = value;
+                    }
+                })
+                laydate.render({
+                    elem : "#endTime",
+                    trigger : "click",
+                    done : function (value, date, endDate) {
+                        stepVue.endTime = value;
+                    }
+                })
+
+                form.on('select(semesterSelect)', function (data) {
+                    //console.log("!!!")
+                    stepVue.semesterId = data.value;
+                    console.log(stepVue.semesterId);
+                })
+                form.on('select(gradeSelect)', function (data) {
+                    //console.log("!!!")
+                    stepVue.gradeId = data.value;
+                    console.log(stepVue.gradeId);
+                    stepVue.getCreatingExam(stepVue.gradeId);
+                    //debugger;
+                })
+
+                form.render();
+            })
+        }
+    })
+
+
+</script>

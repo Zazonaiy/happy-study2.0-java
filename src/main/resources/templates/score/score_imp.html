@@ -1,0 +1,239 @@
+<link rel="stylesheet" href="${ctxPath}/css/man.css">
+
+<style>
+    .showIt {
+        width: 100% !important;
+    }
+    .omitIt {
+        width: 10% !important;
+    }
+    .hiddenIt {
+        width: 0px !important;
+    }
+    .door :hover{
+        background: #95999c;
+        font-size: 30px;
+        font-weight: 700;
+        cursor: pointer;
+        color: white;
+    }
+</style>
+
+<div id="score-imp" class="man-container">
+    <div class="container-fluid">
+        <div class="row tb-head-btn-group">
+            <div class="input-pane col-3">
+                <input type="text" name="title" required lay-verify="required" placeholder="按年级号/名搜索" autocomplete="off"
+                       class="layui-input" id="filterInput" v-model="pageParam.filter.keyword">
+            </div>
+            <div class="col-1">
+                <button class="layui-btn" @click="selectIt">搜索</button>
+            </div>
+        </div>
+
+    </div>
+    <div style="width: 100%; height: 685px; margin-top: 20px;" class="d-flex flex-row">
+        <div class="d-flex flex-row" v-bind:class="{'showIt':!show.scoreBaseInfo, 'omitIt':show.scoreBaseInfo}">
+            <div style="width: 90%; max-height: 700px; overflow-y: auto; white-space: nowrap;" >
+                <div v-for="exam in baseInfo.infoArray" class="card" style="width: 90%; margin-bottom: 12px;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{exam.examName}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{exam.examType.typeDescription}} by {{exam.gradeName}}</h6>
+                        <div class="d-flex flex-row" style="height: 24px; margin-bottom: 16px;" v-if="!show.scoreBaseInfo">
+                            <div style="width: 50%; height: 100%;">
+                                <p class="card-text">{{exam.remark}}</p>
+                            </div>
+                            <div style="width: 16%; height: 100%; ">
+                                <p class="card-text">{{exam.semesterName}}</p>
+                            </div>
+                            <div style="width: 16%; height: 100%; ">
+                                <p class="card-text">{{exam.beginDate}}&nbsp~&nbsp{{exam.endDate}}</p>
+                            </div>
+                            <div style="width: 18%; height: 100%;">
+                                <p class="card-text">{{exam.examState.typeDescription}}</p>
+                            </div>
+                        </div>
+                        <p class="card-text" v-show="show.scoreBaseInfo">...</p>
+
+                        <a href="#" class="card-link" @click="toScoreBaseInfo(exam.id, exam.examName)">查询成绩</a>
+                        <a href="#" class="card-link">成绩录入</a>
+                    </div>
+                </div>
+                <div class="card" style="width: 90%; margin-bottom: 12px;">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="card-link">Card link</a>
+                        <a href="#" class="card-link">Another link</a>
+                    </div>
+                </div>
+                <div class="card" style="width: 90%; margin-bottom: 12px;">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="card-link">Card link</a>
+                        <a href="#" class="card-link">Another link</a>
+                    </div>
+                </div>
+                <div class="card" style="width: 90%; margin-bottom: 12px;">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="card-link">Card link</a>
+                        <a href="#" class="card-link">Another link</a>
+                    </div>
+                </div>
+                <div class="card" style="width: 90%;">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="card-link">Card link</a>
+                        <a href="#" class="card-link">Another link</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-anim layui-anim-fadein d-flex flex-row" v-if="show.scoreBaseInfo" style=" width: 10%; height: 100%;" v-bind:class="{'flex-grow-1':show.scoreBaseInfo, 'hiddenIt':!show.scoreBaseInfo}">
+            <div class="container door shadow rounded" style="height: 100%; padding: 0px; width: 30px;" @click="goBack()">
+                <div class="nav flex-column justify-content-center align-items-center" style="height: 100%; width: 30px;">
+                    <p style="font-size: 26px; font-weight: 400;"><i class="bi bi-arrow-bar-left"></i></p>
+                </div>
+            </div>
+            <div class="flex-grow-1" id="scoreBaseInfo-pane" style="padding-left: 20px;">
+                <!-- LOAD -->
+
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+<script>
+    var scoreVue = new Vue({
+        el : "#score-imp",
+        data : {
+            baseInfo : {
+                infoArray : null,
+            },
+            pageParam : {
+                filter : {
+                    keyword : "",
+                }
+            },
+            show : {
+                scoreBaseInfo : false,
+            },
+            url : {
+                baseUrl : "${ctxPath}/happy-study/scoreMan/",
+                scoreBaseInfo : "baseInfo",
+            },
+            current : {
+                examId : "",
+                examName : "",
+            }
+        },
+        methods : {
+            refresh : function(){
+                this.current.examId = "";
+                this.current.examName = ""
+            },
+            goBack : function(){
+                this.show.scoreBaseInfo = false;
+                //TODO: 清除局部html
+                this.loadingNode(null);
+                this.refresh();
+            },
+            toScoreBaseInfo : function(examId, examName){
+                this.show.scoreBaseInfo = this.show.scoreBaseInfo ? false : true;
+                console.log(scoreVue.show.scoreBaseInfo);
+                //TODO: 局部加载html
+                if (!scoreVue.show.scoreBaseInfo){
+                    this.loadingNode(null);
+                    this.refresh();
+                    return ;
+                }
+
+                var url = this.url.baseUrl + this.url.scoreBaseInfo;
+
+                this.current.examId = examId;
+                this.current.examName = examName;
+                this.loadingNode(url);
+            },
+            loadingNode : function(url){
+                //var url = this.url.scoreBaseInfo;
+                debugger;
+                if (url==undefined||url==null){
+                    $("#scoreBaseInfo-pane").empty();
+                    return ;
+                }
+                var loading = vue.loadingFont;
+
+
+                new Promise(function (resolve, reject) {
+                    var $hidden = $("#scoreBaseInfo-pane");
+                    if ($hidden.length>0){
+                        resolve();
+                    }
+                    setTimeout(()=>{
+                        var $hidden = $("#scoreBaseInfo-pane");
+                        //var $hidden = $("#scoreBaseInfo-pane").children();
+
+                        if ($hidden.length>0){
+                            resolve();
+                        }else{
+                            reject('failed');
+                        }
+                    }, 100)
+                }).then(function () {
+                    $("#scoreBaseInfo-pane").empty();
+                    $("#scoreBaseInfo-pane").html(loading);
+                    $("#scoreBaseInfo-pane").load(url, {}, function () {
+
+                    });
+                }), function (err) {
+                    setTimeout(()=>{
+                        var $hidden = $("#scoreBaseInfo-pane");
+                        debugger;
+                        //var $hidden = $("#scoreBaseInfo-pane").children();
+
+                        if ($hidden.length>0){
+                            resolve();
+                        }else{
+                            reject('failed');
+                        }
+                    }, 100)
+                }
+
+            },
+            selectIt : function(){
+                var keyword = this.pageParam.filter.keyword;
+                this.listExam(keyword);
+            },
+            listExam : function (keyword) {
+                if (keyword==undefined||keyword==null){
+                    keyword = "";
+                }
+                debugger
+                $.ajax({
+                    type : "get",
+                    url : "${ctxPath}/happy-study/exam/list/all/"+keyword,
+                    async : false,
+                    data : {},
+                    success : response=>{
+                        this.baseInfo.infoArray = response.resData;
+                        debugger;
+                    }
+                })
+            }
+        },
+        mounted : function () {
+            this.listExam();
+        }
+    })
+</script>
